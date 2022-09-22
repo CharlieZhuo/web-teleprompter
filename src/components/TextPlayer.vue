@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { onMounted, onUpdated, ref } from "vue";
+import { onMounted, onUpdated, ref, watch } from "vue";
 
 export type textPlayerStyleType = {
   paddingInline: string;
@@ -29,49 +29,93 @@ const props = defineProps<{
   playbackCallbacks: playerCallbacksType;
 }>();
 const { backgroundColor, ...rest } = props.styleConfig;
+const fps = 30;
+const interval = 1000 / fps;
 
 const paragraph = ref<HTMLParagraphElement | null>(null);
+const editor = ref<HTMLTextAreaElement | null>(null);
 const animation = ref<Animation | null>(null);
 
-onMounted(() => {});
+const timerId = ref();
+
+const progress = ref<number | null>(null);
+
 onUpdated(() => {
-  if (paragraph.value && props.playback) {
-    const pElement = paragraph.value;
-    const totalHeight = pElement.scrollHeight;
-    const displayingHeight = pElement.clientHeight;
-    console.log(`totalHeight:${totalHeight},clientHeight:${displayingHeight}`);
-    const ani = paragraph.value.animate(
-      [
-        { transform: `translate(0px,${displayingHeight / 2}px)`, offset: 0 },
+  if (!animation.value) {
+    console.log(`creating new animation`);
+    if (paragraph.value && props.playback) {
+      const pElement = paragraph.value;
+      const totalHeight = pElement.scrollHeight;
+      const displayingHeight = pElement.clientHeight;
+      console.log(
+        `totalHeight:${totalHeight},clientHeight:${displayingHeight}`
+      );
+      const ani = paragraph.value.animate(
+        [
+          { transform: `translate(0px,${displayingHeight / 2}px)`, offset: 0 },
+          {
+            transform: `translate(0px,${displayingHeight / 2 - totalHeight}px)`,
+            offset: 1,
+          },
+        ],
         {
-          transform: `translate(0px,${displayingHeight / 2 - totalHeight}px)`,
-          offset: 1,
-        },
-      ],
-      {
-        easing: "linear",
-        iterations: 1,
-        duration: (totalHeight / props.speed) * 1000,
-        fill: "forwards",
+          easing: "linear",
+          iterations: 1,
+          duration: (totalHeight / props.speed) * 1000,
+          fill: "forwards",
+        }
+      );
+      animation.value = ani;
+
+      //clear timer
+      if (timerId.value) {
+        clearInterval(timerId.value);
       }
-    );
-    animation.value = ani;
+      //set up timer to call onProgress callback periodicly
+      timerId.value = setInterval(() => {
+        if (animation.value) {
+          const duration = animation.value.effect?.getTiming().duration;
+          const currentTime = animation.value.currentTime;
+          if (duration && currentTime) {
+            progress.value = currentTime / +duration;
+            props.playbackCallbacks.onProgress(currentTime, +duration);
+          }
+        }
+      }, interval);
+    }
+  } else {
+    if (props.playback) animation.value.play();
+    else {
+      animation.value.pause();
+
+      if (progress.value && editor.value) {
+        const textAreaElement = editor.value;
+        textAreaElement.scrollTo(
+          0,
+          textAreaElement.scrollHeight * progress.value -
+            textAreaElement.clientHeight / 2
+        );
+      }
+    }
   }
 });
 </script>
 
 <template>
   <div class="container" :style="{ backgroundColor }">
-    <p v-if="playback" ref="paragraph" class="textPlayer" :style="{ ...rest }">
+    <p
+      ref="paragraph"
+      class="textPlayer"
+      :style="{ ...rest, opacity: props.playback ? '1' : '0', zIndex: -1 }"
+    >
       {{ text }}
     </p>
     <textarea
-      v-if="!playback"
-      type="text"
+      ref="editor"
       class="input"
-      :style="{ ...rest }"
+      :style="{ ...rest, display: !props.playback ? 'block' : 'none' }"
       :value="text"
-      @input="onInput"
+      @input="props.onInput"
     >
     </textarea>
   </div>
@@ -100,6 +144,8 @@ onUpdated(() => {
   resize: none;
 
   font-family: sans-serif;
+  white-space: pre-wrap;
+  overflow-wrap: break-word;
 
   background-color: transparent;
 }
