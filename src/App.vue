@@ -17,15 +17,18 @@ const defaultStyle: textPlayerStyleType = {
   paddingInline: "4em",
 };
 
-const callbacks: playerCallbacksType = {
-  onFinish() {},
-  onProgress(currentTimeMs, totalDurationMs) {},
-};
-
 const inputText = ref(sampleText);
 const onInput = (e: Event) => {
   const inputElement = e.target as HTMLInputElement;
   inputText.value = inputElement.value;
+};
+const callback: playerCallbacksType = {
+  onFinish: () => {
+    playing.value = false;
+  },
+  onProgress: (currentTime, duration, progress) => {
+    console.log(`percentage:${progress}`);
+  },
 };
 
 const playing = ref(false);
@@ -53,7 +56,7 @@ const playing = ref(false);
     :styleConfig="defaultStyle"
     :speed="300"
     :playback="playing"
-    :playback-callbacks="callbacks"
+    :playback-callbacks="callback"
   />
 </template>
 
