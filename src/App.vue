@@ -68,7 +68,7 @@ const stopButtonHandler = () => {
     <div class="progressContainer">
       <ProgressBar
         :progress="playbackProgress.progressPercentage"
-        :onChange="null"
+        @change="(newProgress) => playerRef?.setProgress(newProgress)"
       ></ProgressBar>
       <PlaybackTime
         :current-time-ms="playbackProgress.currentTimeMs"

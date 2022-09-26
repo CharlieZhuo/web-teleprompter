@@ -182,6 +182,7 @@ export function useRestoreProgressToNewAnimation(
   watch([animation, progress, () => callback], (nv) => {
     const [animation, progress, onProgress] = nv;
     if (animation) {
+      console.log(`restoring progress on animation`);
       const duration = animation.effect?.getTiming().duration;
       if (duration) {
         animation.currentTime = +duration * progress;

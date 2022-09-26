@@ -1,17 +1,24 @@
 <script setup lang="ts">
 import { computed } from "@vue/reactivity";
 import { onUpdated, ref, watch } from "vue";
+import { clamp } from "../composables/Animations";
+import { usePointerEvent } from "../composables/usePointerEvent";
 
 const props = defineProps<{
   progress: number;
-  onChange: null | ((newProgress: number) => void);
 }>();
+
+const emit = defineEmits<{
+  (e: "change", newProgress: number): void;
+}>();
+
 const railRef = ref<HTMLDivElement | null>(null);
 const thumbRef = ref<HTMLDivElement | null>(null);
 
-const pgs = computed(() => props.progress);
+const updateCounter = ref(0);
 
 onUpdated(() => {
+  updateCounter.value++;
   const rail = railRef.value;
   const thumb = thumbRef.value;
   if (rail && thumb) {
@@ -20,6 +27,26 @@ onUpdated(() => {
     const transform = `translate(${translate}px,0px)`;
     thumb.style.transform = transform;
   }
+});
+
+function calculatePointerPositionPercentage(e: PointerEvent) {
+  const element = e.currentTarget as HTMLDivElement;
+  if (element) {
+    const rect = element.getBoundingClientRect();
+    const percentage = (e.clientX - rect.x) / rect.width;
+    return clamp(percentage, 0, 1);
+  }
+}
+
+usePointerEvent(railRef, {
+  onDown(e) {
+    const newProgress = calculatePointerPositionPercentage(e);
+    newProgress && emit("change", newProgress);
+  },
+  onMove: (e: PointerEvent) => {
+    const newProgress = calculatePointerPositionPercentage(e);
+    newProgress && emit("change", newProgress);
+  },
 });
 </script>
 <template>
