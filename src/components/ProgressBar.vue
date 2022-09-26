@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { computed } from "@vue/reactivity";
-import { onUpdated, ref, watch } from "vue";
+import { onMounted, onUnmounted, onUpdated, ref, watch } from "vue";
 import { clamp } from "../composables/Animations";
 import { usePointerEvent } from "../composables/usePointerEvent";
 
@@ -16,6 +16,30 @@ const railRef = ref<HTMLDivElement | null>(null);
 const thumbRef = ref<HTMLDivElement | null>(null);
 
 const updateCounter = ref(0);
+
+const observerRef = ref<ResizeObserver | null>(null);
+onMounted(() => {
+  const observer = new ResizeObserver((entries) => {
+    const entry = entries[0];
+
+    const rail = entry.target as HTMLDivElement;
+    const thumb = thumbRef.value;
+    if (rail && thumb) {
+      const railRect = rail.getBoundingClientRect();
+      const translate = (props.progress - 0.5) * railRect.width;
+      const transform = `translate(${translate}px,0px)`;
+      thumb.style.transform = transform;
+    }
+  });
+  railRef.value && observer.observe(railRef.value);
+  observerRef.value = observer;
+});
+
+onUnmounted(() => {
+  if (observerRef.value) {
+    observerRef.value.disconnect();
+  }
+});
 
 onUpdated(() => {
   updateCounter.value++;
