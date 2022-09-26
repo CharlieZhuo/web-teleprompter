@@ -4,11 +4,14 @@ import TextPlayer, {
   textPlayerStyleType,
 } from "./components/TextPlayer.vue";
 import PlaybackControl from "./components/PlaybackControl.vue";
-import ProgressBarVue from "./components/ProgressBar.vue";
 import { sampleText } from "./components/sampleText";
 import { ref } from "vue";
-import ProgressBar from "./components/ProgressBar.vue";
-import PlaybackTime from "./components/PlaybackTime.vue";
+
+export type playbackStatusType = {
+  currentTimeMs: number;
+  totalDurationMs: number;
+  progressPercentage: number;
+};
 
 const defaultStyle: textPlayerStyleType = {
   color: "white",
@@ -30,7 +33,7 @@ const callback: playerCallbacksType = {
     playing.value = false;
   },
   onProgress: (currentTime, duration, progress) => {
-    playbackProgress.value = {
+    playbackStatus.value = {
       progressPercentage: progress,
       currentTimeMs: currentTime,
       totalDurationMs: duration,
@@ -41,11 +44,11 @@ const callback: playerCallbacksType = {
 const playing = ref(false);
 
 //should only be set by onProgress callback
-const playbackProgress = ref<{
-  currentTimeMs: number;
-  totalDurationMs: number;
-  progressPercentage: number;
-}>({ currentTimeMs: 0, totalDurationMs: 0, progressPercentage: 0 });
+const playbackStatus = ref<playbackStatusType>({
+  currentTimeMs: 0,
+  totalDurationMs: 0,
+  progressPercentage: 0,
+});
 const playerRef = ref<InstanceType<typeof TextPlayer> | null>(null);
 
 const stopButtonHandler = () => {
@@ -64,37 +67,33 @@ const stopButtonHandler = () => {
         }
       "
       :onStopPress="stopButtonHandler"
+      @change="(newProgress) => playerRef?.setProgress(newProgress)"
+      :playback-status="playbackStatus"
     />
-    <div class="progressContainer">
-      <ProgressBar
-        :progress="playbackProgress.progressPercentage"
-        @change="(newProgress) => playerRef?.setProgress(newProgress)"
-      ></ProgressBar>
-      <PlaybackTime
-        :current-time-ms="playbackProgress.currentTimeMs"
-        :total-duration-ms="playbackProgress.totalDurationMs"
-      ></PlaybackTime>
-    </div>
   </header>
-  <TextPlayer
-    ref="playerRef"
-    :text="inputText"
-    :onInput="onInput"
-    :styleConfig="defaultStyle"
-    :speed="300"
-    :playback="playing"
-    :playback-callbacks="callback"
-    :callback-config="{ frequency: 30 }"
-  />
+  <main class="main">
+    <TextPlayer
+      ref="playerRef"
+      :text="inputText"
+      :onInput="onInput"
+      :styleConfig="defaultStyle"
+      :speed="300"
+      :playback="playing"
+      :playback-callbacks="callback"
+      :callback-config="{ frequency: 30 }"
+    />
+  </main>
 </template>
 
 <style scoped>
 .header {
-  position: absolute;
+  position: relative;
   z-index: 2;
-  inset-inline: 0;
-  inset-block-start: 0;
-  height: max-content;
+  background-color: hsl(0, 0%, 20%);
+}
+.main {
+  height: 100%;
+  position: relative;
 }
 .progressContainer {
   display: flex;

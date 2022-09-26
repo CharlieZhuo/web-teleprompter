@@ -47,7 +47,7 @@ const props = defineProps<{
     frequency: number;
   };
 }>();
-const { backgroundColor, ...rest } = props.styleConfig;
+const { backgroundColor, ...restStyles } = props.styleConfig;
 const fps = computed(() => props.callbackConfig.frequency);
 const interval = computed(() => {
   return 1000 / fps.value;
@@ -96,45 +96,48 @@ defineExpose({ stopPlayback, setProgress });
 </script>
 
 <template>
-  <div class="container" :style="{ backgroundColor }">
-    <p
-      ref="paragraph"
-      class="textPlayer"
-      :style="{ ...rest, opacity: props.playback ? '1' : '0', zIndex: -1 }"
-    >
-      {{ text }}
-    </p>
-    <textarea
-      ref="editor"
-      class="input"
-      :style="{ ...rest, display: !props.playback ? 'block' : 'none' }"
-      :value="text"
-      @input="props.onInput"
-    >
+  <p
+    ref="paragraph"
+    class="textPlayer"
+    :style="{
+      ...restStyles,
+      opacity: props.playback ? '1' : '0',
+      zIndex: -1,
+    }"
+  >
+    {{ text }}
+  </p>
+  <textarea
+    ref="editor"
+    class="input"
+    :style="{
+      ...restStyles,
+      display: !props.playback ? 'block' : 'none',
+      zIndex: 2,
+    }"
+    :value="text"
+    @input="props.onInput"
+  >
     <span class="spacer"></span>
     <span class="spacer"></span>
-    </textarea>
-  </div>
+  </textarea>
+  <div class="background" :style="{ backgroundColor, zIndex: -2 }"></div>
 </template>
 
 <style scoped>
-.container {
+.background {
   overflow-y: hidden;
+  position: relative;
+
+  height: 100%;
 
   margin-block: 0;
   margin-inline: 0;
-
-  position: fixed;
-  inset-inline: 0;
-  inset-block-start: 0;
-
-  block-size: 100vh;
 }
 .input,
 .textPlayer {
   position: absolute;
-  inset-inline: 0;
-  inset-block: 0;
+  inset: 0;
   margin-block: 0;
   margin-inline: 0;
   resize: none;
@@ -148,7 +151,7 @@ defineExpose({ stopPlayback, setProgress });
 
 .input {
   border-width: 0px;
-  outline: 1px solid white;
+  outline: 0px solid white;
 }
 .spacer {
   height: 50%;

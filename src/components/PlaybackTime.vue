@@ -7,7 +7,7 @@ const props = defineProps<{
 }>();
 function formatTime(timeInMs: number) {
   const minute = Math.floor(timeInMs / 60000);
-  const second = ((timeInMs / 1000) % 60).toFixed(3);
+  const second = ((timeInMs / 1000) % 60).toFixed(0);
   return `${minute}:${+second < 10 ? "0" : ""}${second}`;
 }
 const currentTime = computed(() => {
@@ -18,15 +18,16 @@ const duration = computed(() => {
 });
 </script>
 <template>
-  <p class="container">
-    <span class="time">{{ currentTime }}</span> /
-    <span class="time">{{ duration }}</span>
+  <p class="timeContainer">
+    <span class="time">{{ currentTime }}</span
+    >/<span class="time">{{ duration }}</span>
   </p>
 </template>
 
 <style scoped>
-.container {
-  background-color: black;
+.timeContainer {
   font-family: monospace;
+  display: flex;
+  gap: 0.3rem;
 }
 </style>
