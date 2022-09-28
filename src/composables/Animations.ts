@@ -10,9 +10,12 @@ function createAnimation<eleType extends HTMLElement>(
   const clientHeight = ele.clientHeight;
   const ani = ele.animate(
     [
-      { transform: `translate(0px,${clientHeight / 2}px)`, offset: 0 },
       {
-        transform: `translate(0px,${clientHeight / 2 - scrollHeight}px)`,
+        transform: `translate(0px,${clientHeight / 2}px) `,
+        offset: 0,
+      },
+      {
+        transform: `translate(0px,${clientHeight / 2 - scrollHeight}px) `,
         offset: 1,
       },
     ],
@@ -33,7 +36,7 @@ function createAnimation<eleType extends HTMLElement>(
 export function useAnimation<eleType extends HTMLElement>(
   elementToAnimate: Ref<eleType | null>,
   playbackSpeedPxPerSecond: number,
-  ...restWatchItems: any[]
+  ...restWatchItems: Ref[]
 ) {
   const animation = ref<Animation | null>(null);
   const observer = ref<ResizeObserver | null>(null);
@@ -82,6 +85,7 @@ export function useAnimation<eleType extends HTMLElement>(
     (nv, ov, cleanup) => {
       const ele = elementToAnimate.value;
       if (ele) {
+        console.log(`creating new animation`);
         const ani = createAnimation(ele, nv[0]);
         ani.pause();
         animation.value = ani;
@@ -91,7 +95,8 @@ export function useAnimation<eleType extends HTMLElement>(
           animation.value.cancel();
         }
       });
-    }
+    },
+    { deep: true }
   );
   return { animation };
 }
@@ -149,7 +154,7 @@ export function useUpdateProgressFromPlayback(
         }
       }
     },
-    { flush: "post" }
+    { flush: "post", deep: true }
   );
   return { progress };
 }
@@ -158,15 +163,19 @@ export function useFinishCallback(
   animation: Ref<Animation | null>,
   callback: () => void
 ) {
-  watch([animation, () => callback], (nv, ov, cleanup) => {
-    const [animation, onFinish] = nv;
-    if (animation) {
-      animation.addEventListener("finish", onFinish);
-    }
-    cleanup(() => {
-      animation?.removeEventListener("finish", onFinish);
-    });
-  });
+  watch(
+    [animation, () => callback],
+    (nv, ov, cleanup) => {
+      const [animation, onFinish] = nv;
+      if (animation) {
+        animation.addEventListener("finish", onFinish);
+      }
+      cleanup(() => {
+        animation?.removeEventListener("finish", onFinish);
+      });
+    },
+    { deep: true }
+  );
 }
 
 //restore progress for new animation
@@ -179,17 +188,21 @@ export function useRestoreProgressToNewAnimation(
     progressPercentage: number
   ) => void
 ) {
-  watch([animation, progress, () => callback], (nv) => {
-    const [animation, progress, onProgress] = nv;
-    if (animation) {
-      console.log(`restoring progress on animation`);
-      const duration = animation.effect?.getTiming().duration;
-      if (duration) {
-        animation.currentTime = +duration * progress;
-        onProgress(animation.currentTime!, +duration, progress);
+  watch(
+    [animation, progress, () => callback],
+    (nv) => {
+      const [animation, progress, onProgress] = nv;
+      if (animation) {
+        console.log(`restoring progress on animation`);
+        const duration = animation.effect?.getTiming().duration;
+        if (duration) {
+          animation.currentTime = +duration * progress;
+          onProgress(animation.currentTime!, +duration, progress);
+        }
       }
-    }
-  });
+    },
+    { deep: true }
+  );
 }
 
 export function clamp(v: number, min: number, max: number) {

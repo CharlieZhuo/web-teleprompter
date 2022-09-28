@@ -80,6 +80,8 @@ usePointerEvent(railRef, {
 </template>
 <style scoped>
 .rail {
+  margin-inline: 1rem;
+
   flex: 1 1 0px;
   display: flex;
   justify-content: center;

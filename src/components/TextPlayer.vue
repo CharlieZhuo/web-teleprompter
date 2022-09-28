@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { computed } from "@vue/reactivity";
-import { onMounted, onUnmounted, onUpdated, Ref, ref, watch } from "vue";
+import { onUpdated, ref } from "vue";
 import {
   clamp,
   useAnimation,
@@ -12,18 +12,7 @@ import {
   useUpdateProgressFromPlayback,
 } from "../composables/Animations";
 
-export type textPlayerStyleType = {
-  paddingInline: string;
-  textAlign: "center" | "start" | "end";
-
-  backgroundColor: string;
-  color: string;
-
-  fontSize: string;
-  fontWeight: number | "bold" | "normal";
-  lineHeight: string;
-  letterSpacing?: string;
-};
+import { configType } from "./configs/TypographyConfig.vue";
 
 export type onProgress = (
   currentTimeMs: number,
@@ -39,7 +28,7 @@ export type playerCallbacksType = {
 const props = defineProps<{
   text: string;
   onInput: (e: Event) => void;
-  styleConfig: textPlayerStyleType;
+  styleConfig: configType;
   speed: number;
   playback: boolean;
   playbackCallbacks: playerCallbacksType;
@@ -47,7 +36,13 @@ const props = defineProps<{
     frequency: number;
   };
 }>();
-const { backgroundColor, ...restStyles } = props.styleConfig;
+
+const mirrorTransform = computed(() => {
+  return `scale(${props.styleConfig.horizontalMirror ? -1 : 1},${
+    props.styleConfig.verticalMirror ? -1 : 1
+  })`;
+});
+
 const fps = computed(() => props.callbackConfig.frequency);
 const interval = computed(() => {
   return 1000 / fps.value;
@@ -56,7 +51,15 @@ const interval = computed(() => {
 const paragraph = ref<HTMLParagraphElement | null>(null);
 const editor = ref<HTMLTextAreaElement | null>(null);
 
-const { animation } = useAnimation(paragraph, props.speed, props.text);
+onUpdated(() => {
+  console.log(`updated`);
+});
+const { animation } = useAnimation(
+  paragraph,
+  props.speed,
+  computed(() => props.text),
+  computed(() => props.styleConfig)
+);
 useReflectPlaybackProp(
   animation,
   computed(() => props.playback)
@@ -96,35 +99,48 @@ defineExpose({ stopPlayback, setProgress });
 </script>
 
 <template>
-  <p
-    ref="paragraph"
-    class="textPlayer"
-    :style="{
-      ...restStyles,
-      opacity: props.playback ? '1' : '0',
-      zIndex: -1,
-    }"
-  >
-    {{ text }}
-  </p>
-  <textarea
-    ref="editor"
-    class="input"
-    :style="{
-      ...restStyles,
-      display: !props.playback ? 'block' : 'none',
-      zIndex: 2,
-    }"
-    :value="text"
-    @input="props.onInput"
-  >
+  <div class="transformContainer" :style="{ transform: mirrorTransform }">
+    <p
+      ref="paragraph"
+      class="textPlayer"
+      :style="{
+        ...props.styleConfig,
+        opacity: props.playback ? '1' : '0',
+        zIndex: -1,
+      }"
+    >
+      {{ text }}
+    </p>
+    <textarea
+      ref="editor"
+      class="input"
+      :style="{
+        ...props.styleConfig,
+        display: !props.playback ? 'block' : 'none',
+        zIndex: 2,
+      }"
+      :value="text"
+      @input="props.onInput"
+    >
     <span class="spacer"></span>
     <span class="spacer"></span>
-  </textarea>
-  <div class="background" :style="{ backgroundColor, zIndex: -2 }"></div>
+  </textarea
+    >
+    <div
+      class="background"
+      :style="{
+        backgroundColor: props.styleConfig.backgroundColor,
+        zIndex: -2,
+      }"
+    ></div>
+  </div>
 </template>
 
 <style scoped>
+.transformContainer {
+  position: absolute;
+  inset: 0;
+}
 .background {
   overflow-y: hidden;
   position: relative;
@@ -138,9 +154,13 @@ defineExpose({ stopPlayback, setProgress });
 .textPlayer {
   position: absolute;
   inset: 0;
+
   margin-block: 0;
   margin-inline: 0;
   resize: none;
+
+  block-size: 100%;
+  inline-size: 100%;
 
   font-family: sans-serif;
   white-space: pre-wrap;

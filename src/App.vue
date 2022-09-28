@@ -1,11 +1,10 @@
 <script setup lang="ts">
-import TextPlayer, {
-  playerCallbacksType,
-  textPlayerStyleType,
-} from "./components/TextPlayer.vue";
+import TextPlayer, { playerCallbacksType } from "./components/TextPlayer.vue";
 import PlaybackControl from "./components/PlaybackControl.vue";
 import { sampleText } from "./components/sampleText";
 import { ref } from "vue";
+import TypographyConfig from "./components/configs/TypographyConfig.vue";
+import { configType } from "./components/configs/TypographyConfig.vue";
 
 export type playbackStatusType = {
   currentTimeMs: number;
@@ -13,14 +12,24 @@ export type playbackStatusType = {
   progressPercentage: number;
 };
 
-const defaultStyle: textPlayerStyleType = {
+const defaultStyle: configType = {
   color: "white",
   backgroundColor: "black",
   fontSize: "30px",
-  fontWeight: "normal",
+  fontWeight: 500,
   lineHeight: "150%",
   textAlign: "center",
-  paddingInline: "4em",
+  paddingInline: "10%",
+  applyMirrorToAll: false,
+  horizontalMirror: false,
+  verticalMirror: false,
+};
+
+const config = ref(defaultStyle);
+const onNewConfig = (newConfig: configType) => {
+  console.log(`new config:`);
+  console.log(newConfig);
+  config.value = newConfig;
 };
 
 const inputText = ref(sampleText);
@@ -70,13 +79,14 @@ const stopButtonHandler = () => {
       @change="(newProgress) => playerRef?.setProgress(newProgress)"
       :playback-status="playbackStatus"
     />
+    <TypographyConfig v-bind="config" @config="onNewConfig"></TypographyConfig>
   </header>
   <main class="main">
     <TextPlayer
       ref="playerRef"
       :text="inputText"
       :onInput="onInput"
-      :styleConfig="defaultStyle"
+      :styleConfig="config"
       :speed="300"
       :playback="playing"
       :playback-callbacks="callback"
