@@ -74,12 +74,12 @@ usePointerEvent(railRef, {
 });
 </script>
 <template>
-  <div ref="railRef" class="rail">
-    <div ref="thumbRef" class="thumb"></div>
+  <div ref="railRef" class="progressRail">
+    <div ref="thumbRef" class="progressThumb"></div>
   </div>
 </template>
 <style scoped>
-.rail {
+.progressRail {
   margin-inline: 1rem;
 
   flex: 1 1 0px;
@@ -93,7 +93,7 @@ usePointerEvent(railRef, {
   outline: 1px solid hsl(0, 0%, 62%);
   border-radius: 10px;
 }
-.thumb {
+.progressThumb {
   width: 40px;
   height: 40px;
 

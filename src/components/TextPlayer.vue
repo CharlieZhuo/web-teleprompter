@@ -38,9 +38,11 @@ const props = defineProps<{
 }>();
 
 const mirrorTransform = computed(() => {
-  return `scale(${props.styleConfig.horizontalMirror ? -1 : 1},${
-    props.styleConfig.verticalMirror ? -1 : 1
-  })`;
+  return props.styleConfig.applyMirrorToAll
+    ? undefined
+    : `scale(${props.styleConfig.horizontalMirror ? -1 : 1},${
+        props.styleConfig.verticalMirror ? -1 : 1
+      })`;
 });
 
 const fps = computed(() => props.callbackConfig.frequency);
@@ -51,9 +53,6 @@ const interval = computed(() => {
 const paragraph = ref<HTMLParagraphElement | null>(null);
 const editor = ref<HTMLTextAreaElement | null>(null);
 
-onUpdated(() => {
-  console.log(`updated`);
-});
 const { animation } = useAnimation(
   paragraph,
   props.speed,
@@ -99,7 +98,15 @@ defineExpose({ stopPlayback, setProgress });
 </script>
 
 <template>
-  <div class="transformContainer" :style="{ transform: mirrorTransform }">
+  <div
+    class="transformContainer"
+    :style="{
+      transform: mirrorTransform,
+      transition: props.styleConfig.applyMirrorToAll
+        ? ''
+        : ' transform 0.3s ease-out',
+    }"
+  >
     <p
       ref="paragraph"
       class="textPlayer"

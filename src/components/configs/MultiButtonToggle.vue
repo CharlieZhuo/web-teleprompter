@@ -1,38 +1,43 @@
 <script setup lang="ts">
 import { onMounted, onUpdated } from "vue";
+import { replace, default as feather } from "feather-icons";
+export type buttonOption = { optionValue: string; featherIcon?: string };
 
 const props = defineProps<{
-  options: Array<string>;
+  label?: string;
+  options: Array<buttonOption>;
   selected: string;
-  onChange: (newValue: string) => void;
 }>();
-function checkSelectedIsValid() {
-  const valid = props.options.some((option) => {
-    return option === props.selected;
-  });
-  if (!valid)
-    console.error(
-      `Selected option :${
-        props.selected
-      } is not present among options:${props.options.join(",")}`
-    );
-}
+const emits = defineEmits<{
+  (e: "change", newValue: string): void;
+}>();
 onMounted(() => {
-  checkSelectedIsValid();
+  replace();
 });
 onUpdated(() => {
-  checkSelectedIsValid();
+  replace();
 });
+
+const onClick = (e: Event) => {
+  const element = e.currentTarget as HTMLElement;
+  if (element.tagName === "BUTTON" && element.id !== props.selected) {
+    emits("change", element.id);
+  }
+};
 </script>
 <template>
   <div class="multiButtonContainer">
+    <label v-if="props.label">{{ props.label }}</label>
     <button
       v-for="option in props.options"
-      :key="option"
+      :key="option.optionValue"
       class="button"
-      :class="{ styles: props.selected === option }"
+      :class="{ selected: props.selected === option.optionValue }"
+      :id="option.optionValue"
+      v-on:click="onClick"
     >
-      {{ option }}
+      <i v-if="option.featherIcon" v-bind:data-feather="option.featherIcon"></i>
+      <span v-if="!option.featherIcon">{{ option.optionValue }}</span>
     </button>
   </div>
 </template>
@@ -47,7 +52,15 @@ onUpdated(() => {
 }
 .button {
   appearance: none;
-  background-color: transparent;
+
+  display: grid;
+  place-items: center;
+
+  background-color: hsl(0, 0%, 70%);
   color: black;
+  border: 1px solid white;
+}
+.selected {
+  box-shadow: inset 0px 0px 2px 2px black;
 }
 </style>

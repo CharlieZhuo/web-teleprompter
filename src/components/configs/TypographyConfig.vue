@@ -1,8 +1,9 @@
 <script setup lang="ts">
 import NumberInput from "./NumberInput.vue";
-import MultiButtonToggle from "./MultiButtonToggle.vue";
+import MultiButtonToggle, { buttonOption } from "./MultiButtonToggle.vue";
 import extractNumber from "../../util/extractNumber";
 import { ref } from "vue";
+import ToggleSwitch from "./ToggleSwitch.vue";
 
 export type configType = {
   paddingInline: string;
@@ -25,26 +26,57 @@ const emits = defineEmits<{
 
 const props = defineProps<configType>();
 
-const fontSizeHandler = (nv: number) => {
-  const newConfig = { ...props };
-  newConfig.fontSize = nv + "px";
-  emits("config", newConfig);
-};
-const fontWeightHandler = (nv: number) => {
-  const newConfig = { ...props };
-  newConfig.fontWeight = nv;
-  emits("config", newConfig);
-};
-const lineHeightHandler = (nv: number) => {
-  const newConfig = { ...props };
-  newConfig.lineHeight = nv + "%";
-  emits("config", newConfig);
-};
-const paddingHandler = (nv: number) => {
-  const newConfig = { ...props };
-  newConfig.paddingInline = nv + "%";
-  emits("config", newConfig);
-};
+function generateHandler(
+  keyParam: keyof configType,
+  transformer?: (v: number) => string | number
+) {
+  return (nv: number) => {
+    const newConfig = {
+      ...props,
+      [keyParam]: transformer ? transformer(nv) : nv,
+    };
+    emits("config", newConfig);
+  };
+}
+const fontSizeHandler = generateHandler("fontSize", (v) => v + "px");
+const fontWeightHandler = generateHandler("fontWeight");
+const lineHeightHandler = generateHandler("lineHeight", (v) => v + "%");
+const paddingHandler = generateHandler("paddingInline", (v) => v + "%");
+
+function generateMultiButtonsHandler(
+  keyParam: keyof configType,
+  transformer?: (v: string) => string
+) {
+  return (nv: string) => {
+    const newConfig = {
+      ...props,
+      [keyParam]: transformer ? transformer(nv) : nv,
+    };
+    emits("config", newConfig);
+  };
+}
+const alignHandler = generateMultiButtonsHandler("textAlign");
+
+// const fontSizeHandler = (nv: number) => {
+//   const newConfig = { ...props };
+//   newConfig.fontSize = nv + "px";
+//   emits("config", newConfig);
+// };
+// const fontWeightHandler = (nv: number) => {
+//   const newConfig = { ...props };
+//   newConfig.fontWeight = nv;
+//   emits("config", newConfig);
+// };
+// const lineHeightHandler = (nv: number) => {
+//   const newConfig = { ...props };
+//   newConfig.lineHeight = nv + "%";
+//   emits("config", newConfig);
+// };
+// const paddingHandler = (nv: number) => {
+//   const newConfig = { ...props };
+//   newConfig.paddingInline = nv + "%";
+//   emits("config", newConfig);
+// };
 
 const hmHanlder = () => {
   const newConfig = { ...props };
@@ -56,15 +88,33 @@ const vmHanlder = () => {
   newConfig.verticalMirror = !newConfig.verticalMirror;
   emits("config", newConfig);
 };
-
-const lrMirrorRef = ref(false);
+const mirrorAllHandler = () => {
+  const newConfig = { ...props };
+  newConfig.applyMirrorToAll = !newConfig.applyMirrorToAll;
+  emits("config", newConfig);
+};
 
 const writingDirections = ["左到右", "右到左"];
+
+const alignOptions: buttonOption[] = [
+  {
+    optionValue: "start",
+    featherIcon: "align-left",
+  },
+  {
+    optionValue: "center",
+    featherIcon: "align-center",
+  },
+  {
+    optionValue: "end",
+    featherIcon: "align-right",
+  },
+];
 </script>
 <template>
   <div class="configContainer">
     <div class="configPanel">
-      <form class="configForm" @submit.prevent>
+      <form class="confi,{ optionValue:'' }gForm" @submit.prevent>
         <NumberInput
           :element-id="'fontSizeInput'"
           :label="'大小'"
@@ -87,7 +137,11 @@ const writingDirections = ["左到右", "右到左"];
     <div class="configPanel">
       <form class="configForm" @submit.prevent>
         <MultiButtonToggle
-          :options="writingDirections"
+          :options="
+            writingDirections.map((o) => {
+              return { optionValue: o };
+            })
+          "
           :selected="'左到右'"
           :onChange="(nv) => {}"
         ></MultiButtonToggle>
@@ -107,6 +161,12 @@ const writingDirections = ["左到右", "右到左"];
           :value="extractNumber(props.paddingInline) || 0"
           @Change="paddingHandler"
         ></NumberInput>
+        <MultiButtonToggle
+          :options="alignOptions"
+          :label="'对齐方式'"
+          :selected="props.textAlign"
+          @change="alignHandler"
+        ></MultiButtonToggle>
       </form>
       <p class="panelLabel">段落</p>
     </div>
@@ -187,6 +247,11 @@ const writingDirections = ["左到右", "右到左"];
             />
           </svg>
         </button>
+        <ToggleSwitch
+          :checked="props.applyMirrorToAll"
+          :id="'mirrorAll'"
+          @change="mirrorAllHandler"
+        ></ToggleSwitch>
       </form>
       <p class="panelLabel">镜像</p>
     </div>
@@ -231,6 +296,9 @@ const writingDirections = ["左到右", "右到左"];
 }
 .configForm {
   flex: 1 1 0;
+}
+.configForm svg {
+  transition: transform 0.3s ease-out;
 }
 .panelLabel {
   margin-inline: 0;

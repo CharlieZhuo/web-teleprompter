@@ -2,7 +2,7 @@
 import TextPlayer, { playerCallbacksType } from "./components/TextPlayer.vue";
 import PlaybackControl from "./components/PlaybackControl.vue";
 import { sampleText } from "./components/sampleText";
-import { ref } from "vue";
+import { ref, watch } from "vue";
 import TypographyConfig from "./components/configs/TypographyConfig.vue";
 import { configType } from "./components/configs/TypographyConfig.vue";
 
@@ -27,8 +27,8 @@ const defaultStyle: configType = {
 
 const config = ref(defaultStyle);
 const onNewConfig = (newConfig: configType) => {
-  console.log(`new config:`);
-  console.log(newConfig);
+  console.debug(`new config:`);
+  console.debug(newConfig);
   config.value = newConfig;
 };
 
@@ -64,6 +64,19 @@ const stopButtonHandler = () => {
   if (playerRef.value) playerRef.value.stopPlayback();
   playing.value = false;
 };
+
+watch(
+  config,
+  (nc) => {
+    const appElement = document.getElementById("app");
+    if (appElement) {
+      appElement.style.transform = nc.applyMirrorToAll
+        ? `scale(${nc.horizontalMirror ? -1 : 1},${nc.verticalMirror ? -1 : 1})`
+        : "";
+    }
+  },
+  { deep: true }
+);
 </script>
 
 <template>
