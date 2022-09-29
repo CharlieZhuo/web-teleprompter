@@ -35,7 +35,7 @@ function createAnimation<eleType extends HTMLElement>(
 //content change
 export function useAnimation<eleType extends HTMLElement>(
   elementToAnimate: Ref<eleType | null>,
-  playbackSpeedPxPerSecond: number,
+  playbackSpeedPxPerSecond: Ref<number>,
   ...restWatchItems: Ref[]
 ) {
   const animation = ref<Animation | null>(null);
@@ -44,7 +44,7 @@ export function useAnimation<eleType extends HTMLElement>(
   onMounted(() => {
     const ele = elementToAnimate.value;
     if (ele) {
-      const ani = createAnimation(ele, playbackSpeedPxPerSecond);
+      const ani = createAnimation(ele, playbackSpeedPxPerSecond.value);
       ani.pause();
       animation.value = ani;
 
@@ -57,7 +57,7 @@ export function useAnimation<eleType extends HTMLElement>(
           }
           const newAni = createAnimation(
             entry.target as HTMLParagraphElement,
-            playbackSpeedPxPerSecond
+            playbackSpeedPxPerSecond.value
           );
           newAni.pause();
           animation.value = newAni;
@@ -75,9 +75,7 @@ export function useAnimation<eleType extends HTMLElement>(
   //on content change
   watch(
     [
-      () => {
-        return playbackSpeedPxPerSecond;
-      },
+      playbackSpeedPxPerSecond,
       ...restWatchItems.map((item) => {
         return () => item;
       }),

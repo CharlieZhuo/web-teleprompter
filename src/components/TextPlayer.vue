@@ -28,8 +28,7 @@ export type playerCallbacksType = {
 const props = defineProps<{
   text: string;
   onInput: (e: Event) => void;
-  styleConfig: configType;
-  speed: number;
+  config: configType;
   playback: boolean;
   playbackCallbacks: playerCallbacksType;
   callbackConfig: {
@@ -38,10 +37,10 @@ const props = defineProps<{
 }>();
 
 const mirrorTransform = computed(() => {
-  return props.styleConfig.applyMirrorToAll
+  return props.config.applyMirrorToAll
     ? undefined
-    : `scale(${props.styleConfig.horizontalMirror ? -1 : 1},${
-        props.styleConfig.verticalMirror ? -1 : 1
+    : `scale(${props.config.horizontalMirror ? -1 : 1},${
+        props.config.verticalMirror ? -1 : 1
       })`;
 });
 
@@ -55,9 +54,9 @@ const editor = ref<HTMLTextAreaElement | null>(null);
 
 const { animation } = useAnimation(
   paragraph,
-  props.speed,
+  computed(() => props.config.playbackSpeedPxPerSeceond),
   computed(() => props.text),
-  computed(() => props.styleConfig)
+  computed(() => props.config)
 );
 useReflectPlaybackProp(
   animation,
@@ -102,7 +101,7 @@ defineExpose({ stopPlayback, setProgress });
     class="transformContainer"
     :style="{
       transform: mirrorTransform,
-      transition: props.styleConfig.applyMirrorToAll
+      transition: props.config.applyMirrorToAll
         ? ''
         : ' transform 0.3s ease-out',
     }"
@@ -111,7 +110,7 @@ defineExpose({ stopPlayback, setProgress });
       ref="paragraph"
       class="textPlayer"
       :style="{
-        ...props.styleConfig,
+        ...props.config,
         opacity: props.playback ? '1' : '0',
         zIndex: -1,
       }"
@@ -122,7 +121,7 @@ defineExpose({ stopPlayback, setProgress });
       ref="editor"
       class="input"
       :style="{
-        ...props.styleConfig,
+        ...props.config,
         display: !props.playback ? 'block' : 'none',
         zIndex: 2,
       }"
@@ -136,7 +135,7 @@ defineExpose({ stopPlayback, setProgress });
     <div
       class="background"
       :style="{
-        backgroundColor: props.styleConfig.backgroundColor,
+        backgroundColor: props.config.backgroundColor,
         zIndex: -2,
       }"
     ></div>

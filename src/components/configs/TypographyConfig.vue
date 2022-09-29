@@ -19,6 +19,8 @@ export type configType = {
   horizontalMirror: boolean;
   verticalMirror: boolean;
   applyMirrorToAll: boolean;
+
+  playbackSpeedPxPerSeceond: number;
 };
 const emits = defineEmits<{
   (e: "config", newConfig: configType): void;
@@ -42,6 +44,7 @@ const fontSizeHandler = generateHandler("fontSize", (v) => v + "px");
 const fontWeightHandler = generateHandler("fontWeight");
 const lineHeightHandler = generateHandler("lineHeight", (v) => v + "%");
 const paddingHandler = generateHandler("paddingInline", (v) => v + "%");
+const playbackSpeedHandler = generateHandler("playbackSpeedPxPerSeceond");
 
 function generateMultiButtonsHandler(
   keyParam: keyof configType,
@@ -56,27 +59,6 @@ function generateMultiButtonsHandler(
   };
 }
 const alignHandler = generateMultiButtonsHandler("textAlign");
-
-// const fontSizeHandler = (nv: number) => {
-//   const newConfig = { ...props };
-//   newConfig.fontSize = nv + "px";
-//   emits("config", newConfig);
-// };
-// const fontWeightHandler = (nv: number) => {
-//   const newConfig = { ...props };
-//   newConfig.fontWeight = nv;
-//   emits("config", newConfig);
-// };
-// const lineHeightHandler = (nv: number) => {
-//   const newConfig = { ...props };
-//   newConfig.lineHeight = nv + "%";
-//   emits("config", newConfig);
-// };
-// const paddingHandler = (nv: number) => {
-//   const newConfig = { ...props };
-//   newConfig.paddingInline = nv + "%";
-//   emits("config", newConfig);
-// };
 
 const hmHanlder = () => {
   const newConfig = { ...props };
@@ -117,7 +99,7 @@ const alignOptions: buttonOption[] = [
       <form class="confi,{ optionValue:'' }gForm" @submit.prevent>
         <NumberInput
           :element-id="'fontSizeInput'"
-          :label="'大小'"
+          :label="'大小px'"
           :min="14"
           :max="100"
           :value="extractNumber(props.fontSize) || 0"
@@ -147,7 +129,7 @@ const alignOptions: buttonOption[] = [
         ></MultiButtonToggle>
         <NumberInput
           :element-id="'lineHeightInput'"
-          :label="'行高'"
+          :label="'行高%'"
           :value="extractNumber(props.lineHeight) || 0"
           :min="100"
           :max="300"
@@ -155,7 +137,7 @@ const alignOptions: buttonOption[] = [
         ></NumberInput>
         <NumberInput
           :element-id="'paddingInput'"
-          :label="'水平空白'"
+          :label="'水平空白%'"
           :min="0"
           :max="40"
           :value="extractNumber(props.paddingInline) || 0"
@@ -175,10 +157,10 @@ const alignOptions: buttonOption[] = [
         <NumberInput
           :element-id="'lineHeightInput'"
           :label="'每秒像素'"
-          :value="extractNumber(props.lineHeight) || 0"
-          :min="100"
+          :value="props.playbackSpeedPxPerSeceond"
+          :min="10"
           :max="300"
-          @Change="lineHeightHandler"
+          @Change="playbackSpeedHandler"
         ></NumberInput>
       </form>
       <p class="panelLabel">播放速度</p>
@@ -250,14 +232,11 @@ const alignOptions: buttonOption[] = [
         <ToggleSwitch
           :checked="props.applyMirrorToAll"
           :id="'mirrorAll'"
+          :label="'应用镜像至整个APP'"
           @change="mirrorAllHandler"
         ></ToggleSwitch>
       </form>
       <p class="panelLabel">镜像</p>
-    </div>
-    <div class="configPanel">
-      <form class="configForm" @submit.prevent></form>
-      <p class="panelLabel">对齐方式</p>
     </div>
   </div>
 </template>

@@ -23,6 +23,7 @@ const defaultStyle: configType = {
   applyMirrorToAll: false,
   horizontalMirror: false,
   verticalMirror: false,
+  playbackSpeedPxPerSeceond: 100,
 };
 
 const config = ref(defaultStyle);
@@ -99,8 +100,7 @@ watch(
       ref="playerRef"
       :text="inputText"
       :onInput="onInput"
-      :styleConfig="config"
-      :speed="300"
+      :config="config"
       :playback="playing"
       :playback-callbacks="callback"
       :callback-config="{ frequency: 30 }"

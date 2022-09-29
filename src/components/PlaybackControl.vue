@@ -2,6 +2,8 @@
 import ProgressBar from "./ProgressBar.vue";
 import PlaybackTime from "./PlaybackTime.vue";
 import { playbackStatusType } from "../App.vue";
+import { onMounted, onUnmounted, onUpdated, ref } from "vue";
+import feather, { icons } from "feather-icons";
 const props = defineProps<{
   playing: boolean;
   onPlayPausePress: () => void;
@@ -11,39 +13,46 @@ const props = defineProps<{
 const emit = defineEmits<{
   (e: "change", newProgress: number): void;
 }>();
+const inFullscreen = ref(false);
+
+const fsChangeHandler = () => {
+  inFullscreen.value = Boolean(document.fullscreenElement);
+};
+onMounted(() => {
+  document.addEventListener("fullscreenchange", fsChangeHandler);
+  fsChangeHandler();
+});
+onUpdated(() => {});
+onUnmounted(() => {
+  document.removeEventListener("fullscreenchange", fsChangeHandler);
+});
+
+const fsButtonHandler = () => {
+  if (inFullscreen.value) {
+    document.exitFullscreen();
+  } else {
+    document.documentElement.requestFullscreen();
+  }
+};
 </script>
 <template>
   <div class="container">
-    <button @click="onPlayPausePress">
-      <svg
-        xmlns="http://www.w3.org/2000/svg"
-        viewBox="0 0 24 24"
-        class="icon play"
-        v-if="!playing"
-      >
-        <polygon points="5 3 19 12 5 21 5 3"></polygon>
-      </svg>
-      <svg
-        xmlns="http://www.w3.org/2000/svg"
-        viewBox="0 0 24 24"
-        class="icon stop"
-        v-if="playing"
-      >
-        <rect x="6" y="4" width="4" height="16"></rect>
-        <rect x="14" y="4" width="4" height="16"></rect>
-      </svg>
-    </button>
+    <button
+      @click="onPlayPausePress"
+      :style="{
+        stroke: props.playing ? 'blue' : 'green',
+      }"
+      v-html="
+        props.playing
+          ? feather.icons['pause'].toSvg({ stroke: 'blue' })
+          : feather.icons['play'].toSvg({ stroke: 'green' })
+      "
+    ></button>
 
-    <button @click="onStopPress">
-      <svg
-        xmlns="http://www.w3.org/2000/svg"
-        viewBox="0 0 24 24"
-        :style="{ stroke: 'red' }"
-        class="icon stop"
-      >
-        <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
-      </svg>
-    </button>
+    <button
+      @click="onStopPress"
+      v-html="feather.icons['square'].toSvg({ stroke: 'red' })"
+    ></button>
 
     <ProgressBar
       :progress="props.playbackStatus.progressPercentage"
@@ -53,6 +62,14 @@ const emit = defineEmits<{
       :currentTimeMs="props.playbackStatus.currentTimeMs"
       :totalDurationMs="props.playbackStatus.totalDurationMs"
     ></PlaybackTime>
+    <button
+      @click="fsButtonHandler"
+      v-html="
+        inFullscreen
+          ? feather.icons['minimize'].toSvg()
+          : feather.icons['maximize'].toSvg()
+      "
+    ></button>
   </div>
 </template>
 <style scoped>

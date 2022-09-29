@@ -1,6 +1,10 @@
 <script setup lang="ts">
+import { computed } from "@vue/reactivity";
+import { nanoid } from "nanoid";
+
 const props = defineProps<{
-  id: string;
+  id?: string;
+  label?: string;
   checked: boolean;
 }>();
 const emits = defineEmits<{
@@ -9,11 +13,15 @@ const emits = defineEmits<{
 const onClick = (e: Event) => {
   emits("change", !props.checked);
 };
+const id = computed(() => {
+  id || nanoid();
+});
 </script>
 
 <template>
+  <label v-if="props.label" for="id">{{ props.label }} </label>
   <button
-    :id="props.id"
+    :id="id"
     class="toggleSwitch"
     @click="onClick"
     :style="{
