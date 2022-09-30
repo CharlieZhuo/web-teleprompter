@@ -4,6 +4,7 @@ import MultiButtonToggle, { buttonOption } from "./MultiButtonToggle.vue";
 import extractNumber from "../../util/extractNumber";
 import { ref } from "vue";
 import ToggleSwitch from "./ToggleSwitch.vue";
+import StorageManager from "./StorageManager.vue";
 
 export type configType = {
   paddingInline: string;
@@ -45,6 +46,10 @@ const fontWeightHandler = generateHandler("fontWeight");
 const lineHeightHandler = generateHandler("lineHeight", (v) => v + "%");
 const paddingHandler = generateHandler("paddingInline", (v) => v + "%");
 const playbackSpeedHandler = generateHandler("playbackSpeedPxPerSeceond");
+
+const configLoadHandler = (newConfig: configType) => {
+  emits("config", newConfig);
+};
 
 function generateMultiButtonsHandler(
   keyParam: keyof configType,
@@ -237,6 +242,13 @@ const alignOptions: buttonOption[] = [
         ></ToggleSwitch>
       </form>
       <p class="panelLabel">镜像</p>
+    </div>
+    <div class="configPanel">
+      <StorageManager
+        :config="props"
+        @config-loaded="configLoadHandler"
+      ></StorageManager>
+      <p class="panelLabel">保存与读取设置</p>
     </div>
   </div>
 </template>

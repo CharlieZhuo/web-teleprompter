@@ -15,7 +15,7 @@ export type playbackStatusType = {
 const defaultStyle: configType = {
   color: "white",
   backgroundColor: "black",
-  fontSize: "30px",
+  fontSize: "70px",
   fontWeight: 500,
   lineHeight: "150%",
   textAlign: "center",
@@ -23,7 +23,7 @@ const defaultStyle: configType = {
   applyMirrorToAll: false,
   horizontalMirror: false,
   verticalMirror: false,
-  playbackSpeedPxPerSeceond: 100,
+  playbackSpeedPxPerSeceond: 35,
 };
 
 const config = ref(defaultStyle);
