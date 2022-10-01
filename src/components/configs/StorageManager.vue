@@ -19,7 +19,7 @@ const emits = defineEmits<{
 
 const DBName = "teleprompterDB";
 const DBVersion = 1;
-const DBStore = "config";
+const DBStoreName = "config";
 
 const db = ref<IDBDatabase | null>(null);
 const configs = ref<Array<storedConfigType>>([]);
@@ -71,12 +71,13 @@ function openDb(successCallback?: () => void, upgradeCallback?: () => void) {
     successCallback && successCallback();
   };
   req.onerror = function (evt) {
-    console.error("error creating IndexDB");
+    console.error("error openning IndexDB:" + DBName);
+    console.error(req.error);
   };
 
   req.onupgradeneeded = function (evt) {
     console.log("openDb.onupgradeneeded");
-    var store = req.result.createObjectStore(DBStore, {
+    var store = req.result.createObjectStore(DBStoreName, {
       keyPath: "id",
     });
 
@@ -85,13 +86,18 @@ function openDb(successCallback?: () => void, upgradeCallback?: () => void) {
   };
 }
 
-function getObjectStore(
+function openTransactionGetObjectStore(
   db: Ref<IDBDatabase | null>,
   store_name: string,
   mode: IDBTransactionMode
 ) {
   if (db.value) {
     var tx = db.value.transaction(store_name, mode);
+    function transactionErrorHandler() {
+      console.error(`Some error happened in tranaction:`);
+      console.error(tx.error);
+    }
+    tx.addEventListener("error", transactionErrorHandler);
     return tx.objectStore(store_name);
   }
 }
@@ -113,7 +119,11 @@ function getAll(
 }
 
 function saveConfig(config: storedConfigType) {
-  const objectStore = getObjectStore(db, DBStore, "readwrite");
+  const objectStore = openTransactionGetObjectStore(
+    db,
+    DBStoreName,
+    "readwrite"
+  );
   if (objectStore) {
     const req = objectStore.add(config);
     req.onsuccess = function () {
@@ -128,7 +138,11 @@ function saveConfig(config: storedConfigType) {
 }
 
 function getConfigs() {
-  const objectStore = getObjectStore(db, DBStore, "readonly");
+  const objectStore = openTransactionGetObjectStore(
+    db,
+    DBStoreName,
+    "readonly"
+  );
   if (objectStore) {
     getAll(objectStore, (result) => {
       if (Array.isArray(result)) {
@@ -139,7 +153,11 @@ function getConfigs() {
 }
 
 function deleteConfig(config: storedConfigType) {
-  const objectStore = getObjectStore(db, DBStore, "readwrite");
+  const objectStore = openTransactionGetObjectStore(
+    db,
+    DBStoreName,
+    "readwrite"
+  );
   if (objectStore) {
     const req = objectStore.delete(config.id);
     req.onsuccess = () => {
