@@ -19,7 +19,9 @@ const id = computed(() => {
 </script>
 
 <template>
-  <label v-if="props.label" for="id">{{ props.label }} </label>
+  <label class="toggleSwitchLabel" v-if="props.label" for="id"
+    >{{ props.label }}
+  </label>
   <button
     :id="id"
     class="toggleSwitch"
@@ -38,6 +40,9 @@ const id = computed(() => {
 </template>
 
 <style>
+.toggleSwitchLabel {
+  inline-size: max-content;
+}
 .toggleSwitch {
   --inlineSize: 4rem;
   --blockSize: 2rem;
@@ -61,7 +66,7 @@ const id = computed(() => {
   cursor: pointer;
   touch-action: none;
 
-  transition: background-color 0.3s linear;
+  transition: background-color 0.3s ease-out;
 }
 
 .thumb {

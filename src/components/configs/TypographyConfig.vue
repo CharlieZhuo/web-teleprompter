@@ -2,7 +2,6 @@
 import NumberInput from "./NumberInput.vue";
 import MultiButtonToggle, { buttonOption } from "./MultiButtonToggle.vue";
 import extractNumber from "../../util/extractNumber";
-import { ref } from "vue";
 import ToggleSwitch from "./ToggleSwitch.vue";
 import StorageManager from "./StorageManager.vue";
 
@@ -27,7 +26,10 @@ const emits = defineEmits<{
   (e: "config", newConfig: configType): void;
 }>();
 
-const props = defineProps<configType>();
+const props = defineProps<{
+  config: configType;
+  text: string;
+}>();
 
 function generateHandler(
   keyParam: keyof configType,
@@ -35,7 +37,7 @@ function generateHandler(
 ) {
   return (nv: number) => {
     const newConfig = {
-      ...props,
+      ...props.config,
       [keyParam]: transformer ? transformer(nv) : nv,
     };
     emits("config", newConfig);
@@ -57,7 +59,7 @@ function generateMultiButtonsHandler(
 ) {
   return (nv: string) => {
     const newConfig = {
-      ...props,
+      ...props.config,
       [keyParam]: transformer ? transformer(nv) : nv,
     };
     emits("config", newConfig);
@@ -66,22 +68,20 @@ function generateMultiButtonsHandler(
 const alignHandler = generateMultiButtonsHandler("textAlign");
 
 const hmHanlder = () => {
-  const newConfig = { ...props };
+  const newConfig = { ...props.config };
   newConfig.horizontalMirror = !newConfig.horizontalMirror;
   emits("config", newConfig);
 };
 const vmHanlder = () => {
-  const newConfig = { ...props };
+  const newConfig = { ...props.config };
   newConfig.verticalMirror = !newConfig.verticalMirror;
   emits("config", newConfig);
 };
 const mirrorAllHandler = () => {
-  const newConfig = { ...props };
+  const newConfig = { ...props.config };
   newConfig.applyMirrorToAll = !newConfig.applyMirrorToAll;
   emits("config", newConfig);
 };
-
-const writingDirections = ["左到右", "右到左"];
 
 const alignOptions: buttonOption[] = [
   {
@@ -101,19 +101,19 @@ const alignOptions: buttonOption[] = [
 <template>
   <div class="configContainer">
     <div class="configPanel">
-      <form class="confi,{ optionValue:'' }gForm" @submit.prevent>
+      <form class="configForm" @submit.prevent>
         <NumberInput
           :element-id="'fontSizeInput'"
           :label="'大小px'"
           :min="14"
           :max="100"
-          :value="extractNumber(props.fontSize) || 0"
+          :value="extractNumber(props.config.fontSize) || 0"
           @change="fontSizeHandler"
         ></NumberInput>
         <NumberInput
           :element-id="'fontWeightInput'"
           :label="'粗细'"
-          :value="extractNumber(props.fontWeight) || 0"
+          :value="extractNumber(props.config.fontWeight) || 0"
           :max="900"
           :min="100"
           @Change="fontWeightHandler"
@@ -123,19 +123,10 @@ const alignOptions: buttonOption[] = [
     </div>
     <div class="configPanel">
       <form class="configForm" @submit.prevent>
-        <MultiButtonToggle
-          :options="
-            writingDirections.map((o) => {
-              return { optionValue: o };
-            })
-          "
-          :selected="'左到右'"
-          :onChange="(nv) => {}"
-        ></MultiButtonToggle>
         <NumberInput
           :element-id="'lineHeightInput'"
           :label="'行高%'"
-          :value="extractNumber(props.lineHeight) || 0"
+          :value="extractNumber(props.config.lineHeight) || 0"
           :min="100"
           :max="300"
           @Change="lineHeightHandler"
@@ -145,13 +136,13 @@ const alignOptions: buttonOption[] = [
           :label="'水平空白%'"
           :min="0"
           :max="40"
-          :value="extractNumber(props.paddingInline) || 0"
+          :value="extractNumber(props.config.paddingInline) || 0"
           @Change="paddingHandler"
         ></NumberInput>
         <MultiButtonToggle
           :options="alignOptions"
           :label="'对齐方式'"
-          :selected="props.textAlign"
+          :selected="props.config.textAlign"
           @change="alignHandler"
         ></MultiButtonToggle>
       </form>
@@ -162,7 +153,7 @@ const alignOptions: buttonOption[] = [
         <NumberInput
           :element-id="'lineHeightInput'"
           :label="'每秒像素'"
-          :value="props.playbackSpeedPxPerSeceond"
+          :value="props.config.playbackSpeedPxPerSeceond"
           :min="10"
           :max="300"
           @Change="playbackSpeedHandler"
@@ -174,7 +165,9 @@ const alignOptions: buttonOption[] = [
       <form class="configForm" @submit.prevent>
         <button id="vmButton" @click="vmHanlder">
           <svg
-            :style="{ transform: props.verticalMirror ? 'scale(1,-1)' : '' }"
+            :style="{
+              transform: props.config.verticalMirror ? 'scale(1,-1)' : '',
+            }"
             width="48"
             height="48"
             version="1.1"
@@ -210,7 +203,7 @@ const alignOptions: buttonOption[] = [
             xmlns="http://www.w3.org/2000/svg"
             :style="{
               transform: 'rotate(90deg) '.concat(
-                props.horizontalMirror ? ' scale(1,-1)' : ''
+                props.config.horizontalMirror ? ' scale(1,-1)' : ''
               ),
             }"
           >
@@ -235,7 +228,7 @@ const alignOptions: buttonOption[] = [
           </svg>
         </button>
         <ToggleSwitch
-          :checked="props.applyMirrorToAll"
+          :checked="props.config.applyMirrorToAll"
           :id="'mirrorAll'"
           :label="'应用镜像至整个APP'"
           @change="mirrorAllHandler"
@@ -245,7 +238,7 @@ const alignOptions: buttonOption[] = [
     </div>
     <div class="configPanel">
       <StorageManager
-        :config="props"
+        :config="props.config"
         @config-loaded="configLoadHandler"
       ></StorageManager>
       <p class="panelLabel">保存与读取设置</p>
@@ -257,6 +250,11 @@ const alignOptions: buttonOption[] = [
   display: flex;
   align-items: stretch;
   gap: 1rem;
+
+  overflow-x: scroll;
+  overflow-y: hidden;
+
+  transition: block-size 0.4s ease-out;
 }
 .configContainer > *:not(:last-child) {
   border-right: solid 1px gray;
@@ -265,9 +263,11 @@ const alignOptions: buttonOption[] = [
   padding-inline: 0.5rem;
   padding-block: 0.2rem;
   display: flex;
-  justify-content: stretch;
+  justify-content: space-between;
   flex-direction: column;
   align-items: center;
+
+  touch-action: manipulation;
 }
 .configContainer button {
   appearance: none;
@@ -284,9 +284,6 @@ const alignOptions: buttonOption[] = [
 }
 .configContainer button:hover:not(:active) {
   background-color: rgb(245, 245, 245);
-}
-.configForm {
-  flex: 1 1 0;
 }
 .configForm svg {
   transition: transform 0.3s ease-out;

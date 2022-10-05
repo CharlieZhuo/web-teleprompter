@@ -39,6 +39,9 @@ const onChange = (e: Event) => {
   justify-content: space-between;
   gap: 1em;
 }
+.numberInputLabel span {
+  min-inline-size: max-content;
+}
 .numberInput {
   text-align: end;
   inline-size: 5em;

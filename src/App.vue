@@ -5,6 +5,8 @@ import { sampleText } from "./components/sampleText";
 import { ref, watch } from "vue";
 import TypographyConfig from "./components/configs/TypographyConfig.vue";
 import { configType } from "./components/configs/TypographyConfig.vue";
+import FloatingButton from "./components/FloatingButton.vue";
+import { default as feather, icons } from "feather-icons";
 
 export type playbackStatusType = {
   currentTimeMs: number;
@@ -78,6 +80,7 @@ watch(
   },
   { deep: true }
 );
+const showPanel = ref(true);
 </script>
 
 <template>
@@ -93,7 +96,12 @@ watch(
       @change="(newProgress) => playerRef?.setProgress(newProgress)"
       :playback-status="playbackStatus"
     />
-    <TypographyConfig v-bind="config" @config="onNewConfig"></TypographyConfig>
+    <TypographyConfig
+      :config="config"
+      :text="inputText"
+      :show-config-panel="showPanel"
+      @config="onNewConfig"
+    ></TypographyConfig>
   </header>
   <main class="main">
     <TextPlayer
@@ -106,6 +114,13 @@ watch(
       :callback-config="{ frequency: 30 }"
     />
   </main>
+  <FloatingButton
+    :label="{
+      type: 'featherIcon',
+      featherIcon: 'sliders',
+    }"
+    @click="showPanel = !showPanel"
+  ></FloatingButton>
 </template>
 
 <style scoped>
@@ -113,6 +128,8 @@ watch(
   position: relative;
   z-index: 2;
   background-color: hsl(0, 0%, 20%);
+
+  overflow-x: hidden;
 }
 .main {
   height: 100%;

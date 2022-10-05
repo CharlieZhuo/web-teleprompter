@@ -11,12 +11,6 @@ const props = defineProps<{
 const emits = defineEmits<{
   (e: "change", newValue: string): void;
 }>();
-onMounted(() => {
-  replace();
-});
-onUpdated(() => {
-  replace();
-});
 
 const onClick = (e: Event) => {
   const element = e.currentTarget as HTMLElement;
@@ -36,7 +30,10 @@ const onClick = (e: Event) => {
       :id="option.optionValue"
       v-on:click="onClick"
     >
-      <i v-if="option.featherIcon" v-bind:data-feather="option.featherIcon"></i>
+      <i
+        v-if="option.featherIcon"
+        v-html="feather.icons[option.featherIcon].toSvg()"
+      ></i>
       <span v-if="!option.featherIcon">{{ option.optionValue }}</span>
     </button>
   </div>
@@ -49,6 +46,9 @@ const onClick = (e: Event) => {
 }
 .multiButtonContainer > .button:not(:last-child, :only-child) {
   border-inline-end: 1px solid gray;
+}
+.multiButtonContainer label {
+  min-inline-size: max-content;
 }
 .button {
   appearance: none;
