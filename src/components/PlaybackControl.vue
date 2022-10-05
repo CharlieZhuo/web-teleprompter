@@ -36,7 +36,7 @@ const fsButtonHandler = () => {
 };
 </script>
 <template>
-  <div class="container">
+  <div class="pbControlContainer">
     <button
       @click="onPlayPausePress"
       :style="{
@@ -73,14 +73,14 @@ const fsButtonHandler = () => {
   </div>
 </template>
 <style scoped>
-.container {
+.pbControlContainer {
   display: flex;
   align-items: center;
   gap: 1rem;
 
   padding-inline: 1rem;
 }
-.container button {
+.pbControlContainer button {
   appearance: none;
 
   display: grid;
@@ -93,7 +93,7 @@ const fsButtonHandler = () => {
   background-color: hsl(0, 0%, 50%);
 }
 
-.container button:hover:not(:active) {
+.pbControlContainer button:hover:not(:active) {
   background-color: hsl(0, 0%, 70%);
 }
 .play {

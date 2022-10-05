@@ -7,6 +7,7 @@ import TypographyConfig from "./components/configs/TypographyConfig.vue";
 import { configType } from "./components/configs/TypographyConfig.vue";
 import FloatingButton from "./components/FloatingButton.vue";
 import { default as feather, icons } from "feather-icons";
+import CollapsePanel from "./components/CollapsePanel.vue";
 
 export type playbackStatusType = {
   currentTimeMs: number;
@@ -96,12 +97,13 @@ const showPanel = ref(true);
       @change="(newProgress) => playerRef?.setProgress(newProgress)"
       :playback-status="playbackStatus"
     />
-    <TypographyConfig
-      :config="config"
-      :text="inputText"
-      :show-config-panel="showPanel"
-      @config="onNewConfig"
-    ></TypographyConfig>
+    <CollapsePanel :collapsed="!showPanel">
+      <TypographyConfig
+        :config="config"
+        :text="inputText"
+        @config="onNewConfig"
+      ></TypographyConfig>
+    </CollapsePanel>
   </header>
   <main class="main">
     <TextPlayer
