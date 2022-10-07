@@ -19,29 +19,32 @@ const id = computed(() => {
 </script>
 
 <template>
-  <label class="toggleSwitchLabel" v-if="props.label" for="id"
-    >{{ props.label }}
-  </label>
-  <button
-    :id="id"
-    class="toggleSwitch"
-    @click="onClick"
-    :style="{
-      backgroundColor: props.checked ? `#9ef075cc` : 'white',
-    }"
-  >
-    <div
-      class="thumb"
+  <div :style="{ display: 'flex', alignItems: 'center', gap: '0.5em' }">
+    <label class="toggleSwitchLabel" v-if="props.label" for="id"
+      >{{ props.label }}
+    </label>
+    <button
+      :id="id"
+      class="toggleSwitch"
+      @click="onClick"
       :style="{
-        transform: props.checked ? `translate(var(--blockSize), 0)` : '',
+        backgroundColor: props.checked ? `#9ef075cc` : 'white',
       }"
-    ></div>
-  </button>
+    >
+      <div
+        class="thumb"
+        :style="{
+          transform: props.checked ? `translate(var(--blockSize), 0)` : '',
+        }"
+      ></div>
+    </button>
+  </div>
 </template>
 
 <style>
 .toggleSwitchLabel {
   inline-size: max-content;
+  display: block;
 }
 .toggleSwitch {
   --inlineSize: 4rem;

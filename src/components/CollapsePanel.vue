@@ -2,9 +2,12 @@
 import { computed } from "@vue/reactivity";
 import { onMounted, onUnmounted, ref, watch } from "vue";
 
-const props = defineProps<{
-  collapsed: boolean;
-}>();
+const props = withDefaults(
+  defineProps<{
+    collapsed: boolean;
+  }>(),
+  { collapsed: false }
+);
 const contentBlockSize = ref(0);
 const contentRef = ref<HTMLDivElement | null>(null);
 
@@ -19,7 +22,9 @@ onMounted(() => {
 
     const resizeObserver = new ResizeObserver((entries) => {
       const entry = entries[0];
-      contentBlockSize.value = entry.contentRect.height;
+      const newHeight = entry.contentRect.height;
+      if (newHeight !== contentBlockSize.value)
+        contentBlockSize.value = newHeight;
     });
     resizeObserver.observe(contentElement);
 

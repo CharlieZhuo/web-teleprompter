@@ -163,70 +163,94 @@ const alignOptions: buttonOption[] = [
     </div>
     <div class="configPanel">
       <form class="configForm" @submit.prevent>
-        <button id="vmButton" @click="vmHanlder">
-          <svg
+        <div
+          :style="{
+            display: 'flex',
+          }"
+        >
+          <button
+            id="vmButton"
+            @click="vmHanlder"
             :style="{
-              transform: props.config.verticalMirror ? 'scale(1,-1)' : '',
-            }"
-            width="48"
-            height="48"
-            version="1.1"
-            viewBox="0 0 16.933 16.933"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <path
-              d="m13.88 13.575h-10.699l2.5659-3.3366h5.566z"
-              style="stroke-width: 0.26458px; stroke: #000"
-            />
-            <path
-              d="m.86125 8.4667h15.211v-.08787"
-              style="
-                fill: none;
-                stroke-dasharray: 2.4, 0.6, 0.3, 0.6;
-                stroke-dashoffset: 1.35;
-                stroke-width: 0.3;
-                stroke: #000;
-              "
-            />
-            <path
-              d="m3.1818 3.0943h10.699l-2.5659 3.3366h-5.566z"
-              style="fill: none; stroke-width: 0.26458px; stroke: #000"
-            />
-          </svg>
-        </button>
-        <button id="hmButton" @click="hmHanlder">
-          <svg
-            width="48"
-            height="48"
-            version="1.1"
-            viewBox="0 0 16.933 16.933"
-            xmlns="http://www.w3.org/2000/svg"
-            :style="{
-              transform: 'rotate(90deg) '.concat(
-                props.config.horizontalMirror ? ' scale(1,-1)' : ''
-              ),
+              boxShadow: props.config.verticalMirror
+                ? 'inset 0px 0px 0px 4px black'
+                : 'none',
+              transition: `box-shadow 0.3s ease-out`,
             }"
           >
-            <path
-              d="m13.88 13.575h-10.699l2.5659-3.3366h5.566z"
-              style="stroke-width: 0.26458px; stroke: #000"
-            />
-            <path
-              d="m.86125 8.4667h15.211v-.08787"
-              style="
-                fill: none;
-                stroke-dasharray: 2.4, 0.6, 0.3, 0.6;
-                stroke-dashoffset: 1.35;
-                stroke-width: 0.3;
-                stroke: #000;
-              "
-            />
-            <path
-              d="m3.1818 3.0943h10.699l-2.5659 3.3366h-5.566z"
-              style="fill: none; stroke-width: 0.26458px; stroke: #000"
-            />
-          </svg>
-        </button>
+            <svg
+              :style="{
+                transform: props.config.verticalMirror ? 'scale(1,-1)' : '',
+              }"
+              width="48"
+              height="48"
+              version="1.1"
+              viewBox="0 0 16.933 16.933"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                d="m13.88 13.575h-10.699l2.5659-3.3366h5.566z"
+                style="stroke-width: 0.26458px; stroke: #000"
+              />
+              <path
+                d="m.86125 8.4667h15.211v-.08787"
+                style="
+                  fill: none;
+                  stroke-dasharray: 2.4, 0.6, 0.3, 0.6;
+                  stroke-dashoffset: 1.35;
+                  stroke-width: 0.3;
+                  stroke: #000;
+                "
+              />
+              <path
+                d="m3.1818 3.0943h10.699l-2.5659 3.3366h-5.566z"
+                style="fill: none; stroke-width: 0.26458px; stroke: #000"
+              />
+            </svg>
+          </button>
+          <button
+            id="hmButton"
+            @click="hmHanlder"
+            :style="{
+              boxShadow: props.config.horizontalMirror
+                ? 'inset 0px 0px 0px 4px black'
+                : 'none',
+              transition: `box-shadow 0.3s ease-out`,
+            }"
+          >
+            <svg
+              width="48"
+              height="48"
+              version="1.1"
+              viewBox="0 0 16.933 16.933"
+              xmlns="http://www.w3.org/2000/svg"
+              :style="{
+                transform: 'rotate(90deg) '.concat(
+                  props.config.horizontalMirror ? ' scale(1,-1)' : ''
+                ),
+              }"
+            >
+              <path
+                d="m13.88 13.575h-10.699l2.5659-3.3366h5.566z"
+                style="stroke-width: 0.26458px; stroke: #000"
+              />
+              <path
+                d="m.86125 8.4667h15.211v-.08787"
+                style="
+                  fill: none;
+                  stroke-dasharray: 2.4, 0.6, 0.3, 0.6;
+                  stroke-dashoffset: 1.35;
+                  stroke-width: 0.3;
+                  stroke: #000;
+                "
+              />
+              <path
+                d="m3.1818 3.0943h10.699l-2.5659 3.3366h-5.566z"
+                style="fill: none; stroke-width: 0.26458px; stroke: #000"
+              />
+            </svg>
+          </button>
+        </div>
         <ToggleSwitch
           :checked="props.config.applyMirrorToAll"
           :id="'mirrorAll'"
