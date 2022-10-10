@@ -1,0 +1,92 @@
+{
+  "deletePreferenceLabel": [
+    {
+      "type": 0,
+      "value": "Delete preference"
+    }
+  ],
+  "fontSizeLabel": [
+    {
+      "type": 0,
+      "value": "Font size(px)"
+    }
+  ],
+  "fontWeightLabel": [
+    {
+      "type": 0,
+      "value": "Font weight"
+    }
+  ],
+  "formatConfigPanelLabel": [
+    {
+      "type": 0,
+      "value": "Format"
+    }
+  ],
+  "inlinePaddingLabel": [
+    {
+      "type": 0,
+      "value": "Inline padding(%)"
+    }
+  ],
+  "lineHeightLabel": [
+    {
+      "type": 0,
+      "value": "Line height(%)"
+    }
+  ],
+  "mirrorAllToggleLabel": [
+    {
+      "type": 0,
+      "value": "Apply to all"
+    }
+  ],
+  "mirrorConfigPanelLabel": [
+    {
+      "type": 0,
+      "value": "Mirror"
+    }
+  ],
+  "playbackSpeedPanelLabel": [
+    {
+      "type": 0,
+      "value": "Playback speed"
+    }
+  ],
+  "preferenceConfigPanelLabel": [
+    {
+      "type": 0,
+      "value": "Preference"
+    }
+  ],
+  "readPreferenceLabel": [
+    {
+      "type": 0,
+      "value": "Read preference"
+    }
+  ],
+  "savePreferenceLabel": [
+    {
+      "type": 0,
+      "value": "Save preference"
+    }
+  ],
+  "speedPxLabel": [
+    {
+      "type": 0,
+      "value": "Playback speed(px/sec)"
+    }
+  ],
+  "textAlignLabel": [
+    {
+      "type": 0,
+      "value": "Text align"
+    }
+  ],
+  "typographyConfigPanelLabel": [
+    {
+      "type": 0,
+      "value": "Typography"
+    }
+  ]
+}

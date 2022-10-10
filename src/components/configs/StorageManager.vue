@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { nanoid } from "nanoid";
 import { onMounted, onUpdated, Ref, ref } from "vue";
+import { useIntl } from "vue-intl";
 import { configType } from "./TypographyConfig.vue";
 
 export type storedConfigType = {
@@ -175,6 +176,8 @@ onMounted(() => {
     getConfigs();
   });
 });
+
+const intl = useIntl();
 </script>
 <template>
   <div>
@@ -193,10 +196,30 @@ onMounted(() => {
     </ul>
 
     <div>
-      <button @click="saveButtonHandler">保存设置</button>
-      <button @click="readButtonHandler">读取设置</button>
-      <button @click="deleteButtonHandler">删除设置</button>
-      <button @click="refreshButtonHandler">刷新</button>
+      <button @click="saveButtonHandler">
+        {{
+          intl.formatMessage({
+            id: "savePreferenceLabel",
+            defaultMessage: "保存设置",
+          })
+        }}
+      </button>
+      <button @click="readButtonHandler">
+        {{
+          intl.formatMessage({
+            id: "readPreferenceLabel",
+            defaultMessage: "读取设置",
+          })
+        }}
+      </button>
+      <button @click="deleteButtonHandler">
+        {{
+          intl.formatMessage({
+            id: "deletePreferenceLabel",
+            defaultMessage: "删除设置",
+          })
+        }}
+      </button>
     </div>
   </div>
 </template>

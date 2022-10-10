@@ -1,0 +1,92 @@
+{
+  "deletePreferenceLabel": [
+    {
+      "type": 0,
+      "value": "删除设置"
+    }
+  ],
+  "fontSizeLabel": [
+    {
+      "type": 0,
+      "value": "字体大小（像素）"
+    }
+  ],
+  "fontWeightLabel": [
+    {
+      "type": 0,
+      "value": "字体粗细"
+    }
+  ],
+  "formatConfigPanelLabel": [
+    {
+      "type": 0,
+      "value": "段落"
+    }
+  ],
+  "inlinePaddingLabel": [
+    {
+      "type": 0,
+      "value": "水平内边距"
+    }
+  ],
+  "lineHeightLabel": [
+    {
+      "type": 0,
+      "value": "行高（字体大小%）"
+    }
+  ],
+  "mirrorAllToggleLabel": [
+    {
+      "type": 0,
+      "value": "应用至整个APP"
+    }
+  ],
+  "mirrorConfigPanelLabel": [
+    {
+      "type": 0,
+      "value": "镜像"
+    }
+  ],
+  "playbackSpeedPanelLabel": [
+    {
+      "type": 0,
+      "value": "播放速度"
+    }
+  ],
+  "preferenceConfigPanelLabel": [
+    {
+      "type": 0,
+      "value": "用户偏好"
+    }
+  ],
+  "readPreferenceLabel": [
+    {
+      "type": 0,
+      "value": "读取设置"
+    }
+  ],
+  "savePreferenceLabel": [
+    {
+      "type": 0,
+      "value": "保存设置"
+    }
+  ],
+  "speedPxLabel": [
+    {
+      "type": 0,
+      "value": "滚动速度（像素/秒）"
+    }
+  ],
+  "textAlignLabel": [
+    {
+      "type": 0,
+      "value": "对齐方式"
+    }
+  ],
+  "typographyConfigPanelLabel": [
+    {
+      "type": 0,
+      "value": "字体"
+    }
+  ]
+}

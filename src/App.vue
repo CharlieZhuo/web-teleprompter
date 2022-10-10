@@ -6,8 +6,8 @@ import { ref, watch } from "vue";
 import TypographyConfig from "./components/configs/TypographyConfig.vue";
 import { configType } from "./components/configs/TypographyConfig.vue";
 import FloatingButton from "./components/FloatingButton.vue";
-import { default as feather, icons } from "feather-icons";
 import CollapsePanel from "./components/CollapsePanel.vue";
+import IntlManager from "./IntlManager.vue";
 
 export type playbackStatusType = {
   currentTimeMs: number;
@@ -85,44 +85,46 @@ const showPanel = ref(true);
 </script>
 
 <template>
-  <header class="header">
-    <PlaybackControl
-      :playing="playing"
-      :onPlayPausePress="
-        () => {
-          playing = !playing;
-        }
-      "
-      :onStopPress="stopButtonHandler"
-      @change="(newProgress) => playerRef?.setProgress(newProgress)"
-      :playback-status="playbackStatus"
-    />
-    <CollapsePanel :collapsed="!showPanel">
-      <TypographyConfig
-        :config="config"
+  <IntlManager>
+    <header class="header">
+      <PlaybackControl
+        :playing="playing"
+        :onPlayPausePress="
+          () => {
+            playing = !playing;
+          }
+        "
+        :onStopPress="stopButtonHandler"
+        @change="(newProgress) => playerRef?.setProgress(newProgress)"
+        :playback-status="playbackStatus"
+      />
+      <CollapsePanel :collapsed="!showPanel">
+        <TypographyConfig
+          :config="config"
+          :text="inputText"
+          @config="onNewConfig"
+        ></TypographyConfig>
+      </CollapsePanel>
+    </header>
+    <main class="main">
+      <TextPlayer
+        ref="playerRef"
         :text="inputText"
-        @config="onNewConfig"
-      ></TypographyConfig>
-    </CollapsePanel>
-  </header>
-  <main class="main">
-    <TextPlayer
-      ref="playerRef"
-      :text="inputText"
-      :onInput="onInput"
-      :config="config"
-      :playback="playing"
-      :playback-callbacks="callback"
-      :callback-config="{ frequency: 30 }"
-    />
-  </main>
-  <FloatingButton
-    :label="{
-      type: 'featherIcon',
-      featherIcon: 'sliders',
-    }"
-    @click="showPanel = !showPanel"
-  ></FloatingButton>
+        :onInput="onInput"
+        :config="config"
+        :playback="playing"
+        :playback-callbacks="callback"
+        :callback-config="{ frequency: 30 }"
+      />
+    </main>
+    <FloatingButton
+      :label="{
+        type: 'featherIcon',
+        featherIcon: 'sliders',
+      }"
+      @click="showPanel = !showPanel"
+    ></FloatingButton>
+  </IntlManager>
 </template>
 
 <style scoped>

@@ -4,6 +4,9 @@ import MultiButtonToggle, { buttonOption } from "./MultiButtonToggle.vue";
 import extractNumber from "../../util/extractNumber";
 import ToggleSwitch from "./ToggleSwitch.vue";
 import StorageManager from "./StorageManager.vue";
+import { useIntl } from "vue-intl";
+import { inject } from "vue";
+import { localeKey, localeType, supportedLocales } from "../../IntlTypes";
 
 export type configType = {
   paddingInline: string;
@@ -83,6 +86,9 @@ const mirrorAllHandler = () => {
   emits("config", newConfig);
 };
 
+const intl = useIntl();
+const locale = inject(localeKey);
+
 const alignOptions: buttonOption[] = [
   {
     optionValue: "start",
@@ -97,14 +103,38 @@ const alignOptions: buttonOption[] = [
     featherIcon: "align-right",
   },
 ];
+const localeOptions: buttonOption[] = supportedLocales.map((v) => {
+  return {
+    optionValue: v,
+  };
+});
+
+const localeChangeHandler = (nv: string) => {
+  locale?.setLocale(nv as localeType);
+};
 </script>
 <template>
   <div class="configContainer">
+    <div v-if="locale">
+      <MultiButtonToggle
+        :options="localeOptions"
+        :selected="locale.currentLocale.value"
+        @change="localeChangeHandler"
+      >
+        ></MultiButtonToggle
+      >
+    </div>
     <div class="configPanel">
       <form class="configForm" @submit.prevent>
         <NumberInput
           :element-id="'fontSizeInput'"
-          :label="'大小px'"
+          :label="
+            intl.formatMessage({
+              id: 'fontSizeLabel',
+              defaultMessage: '字体大小（像素）',
+              description: 'font size input label.',
+            })
+          "
           :min="14"
           :max="100"
           :value="extractNumber(props.config.fontSize) || 0"
@@ -112,20 +142,39 @@ const alignOptions: buttonOption[] = [
         ></NumberInput>
         <NumberInput
           :element-id="'fontWeightInput'"
-          :label="'粗细'"
+          :label="
+            intl.formatMessage({
+              id: 'fontWeightLabel',
+              defaultMessage: '字体粗细',
+              description: 'font weight input label.',
+            })
+          "
           :value="extractNumber(props.config.fontWeight) || 0"
           :max="900"
           :min="100"
           @Change="fontWeightHandler"
         ></NumberInput>
       </form>
-      <p class="panelLabel">字体</p>
+      <p class="panelLabel">
+        {{
+          intl.formatMessage({
+            id: "typographyConfigPanelLabel",
+            defaultMessage: "字体",
+          })
+        }}
+      </p>
     </div>
     <div class="configPanel">
       <form class="configForm" @submit.prevent>
         <NumberInput
           :element-id="'lineHeightInput'"
-          :label="'行高%'"
+          :label="
+            intl.formatMessage({
+              id: 'lineHeightLabel',
+              defaultMessage: '行高（字体大小%）',
+              description: 'line height input label.',
+            })
+          "
           :value="extractNumber(props.config.lineHeight) || 0"
           :min="100"
           :max="300"
@@ -133,7 +182,13 @@ const alignOptions: buttonOption[] = [
         ></NumberInput>
         <NumberInput
           :element-id="'paddingInput'"
-          :label="'水平空白%'"
+          :label="
+            intl.formatMessage({
+              id: 'inlinePaddingLabel',
+              defaultMessage: '水平内边距',
+              description: 'inline direction padding input label.',
+            })
+          "
           :min="0"
           :max="40"
           :value="extractNumber(props.config.paddingInline) || 0"
@@ -141,25 +196,51 @@ const alignOptions: buttonOption[] = [
         ></NumberInput>
         <MultiButtonToggle
           :options="alignOptions"
-          :label="'对齐方式'"
+          :label="
+            intl.formatMessage({
+              id: 'textAlignLabel',
+              defaultMessage: '对齐方式',
+              description: 'text align input label.',
+            })
+          "
           :selected="props.config.textAlign"
           @change="alignHandler"
         ></MultiButtonToggle>
       </form>
-      <p class="panelLabel">段落</p>
+      <p class="panelLabel">
+        {{
+          intl.formatMessage({
+            id: "formatConfigPanelLabel",
+            defaultMessage: "段落",
+          })
+        }}
+      </p>
     </div>
     <div class="configPanel">
       <form class="configForm" @submit.prevent>
         <NumberInput
           :element-id="'lineHeightInput'"
-          :label="'每秒像素'"
+          :label="
+            intl.formatMessage({
+              id: 'speedPxLabel',
+              defaultMessage: '滚动速度（像素/秒）',
+              description: 'playback speed (in px per second) input label.',
+            })
+          "
           :value="props.config.playbackSpeedPxPerSeceond"
           :min="10"
           :max="300"
           @Change="playbackSpeedHandler"
         ></NumberInput>
       </form>
-      <p class="panelLabel">播放速度</p>
+      <p class="panelLabel">
+        {{
+          intl.formatMessage({
+            id: "playbackSpeedPanelLabel",
+            defaultMessage: "播放速度",
+          })
+        }}
+      </p>
     </div>
     <div class="configPanel">
       <form class="configForm" @submit.prevent>
@@ -195,16 +276,24 @@ const alignOptions: buttonOption[] = [
               <path
                 d="m.86125 8.4667h15.211v-.08787"
                 style="
-                  fill: none;
-                  stroke-dasharray: 2.4, 0.6, 0.3, 0.6;
-                  stroke-dashoffset: 1.35;
-                  stroke-width: 0.3;
-                  stroke: #000;
+                   {
+                    fill: none;
+                    stroke-dasharray: 2.4, 0.6, 0.3, 0.6;
+                    stroke-dashoffset: 1.35;
+                    stroke-width: 0.3;
+                    stroke: #000;
+                  }
                 "
               />
               <path
                 d="m3.1818 3.0943h10.699l-2.5659 3.3366h-5.566z"
-                style="fill: none; stroke-width: 0.26458px; stroke: #000"
+                style="
+                   {
+                    fill: none;
+                    stroke-width: 0.26458px;
+                    stroke: #000;
+                  }
+                "
               />
             </svg>
           </button>
@@ -237,11 +326,13 @@ const alignOptions: buttonOption[] = [
               <path
                 d="m.86125 8.4667h15.211v-.08787"
                 style="
-                  fill: none;
-                  stroke-dasharray: 2.4, 0.6, 0.3, 0.6;
-                  stroke-dashoffset: 1.35;
-                  stroke-width: 0.3;
-                  stroke: #000;
+                   {
+                    fill: none;
+                    stroke-dasharray: 2.4, 0.6, 0.3, 0.6;
+                    stroke-dashoffset: 1.35;
+                    stroke-width: 0.3;
+                    stroke: #000;
+                  }
                 "
               />
               <path
@@ -254,18 +345,38 @@ const alignOptions: buttonOption[] = [
         <ToggleSwitch
           :checked="props.config.applyMirrorToAll"
           :id="'mirrorAll'"
-          :label="'应用镜像至整个APP'"
+          :label="
+            intl.formatMessage({
+              id: 'mirrorAllToggleLabel',
+              defaultMessage: '应用至整个APP',
+              description: 'label for toggle that apply mirror to entire app.',
+            })
+          "
           @change="mirrorAllHandler"
         ></ToggleSwitch>
       </form>
-      <p class="panelLabel">镜像</p>
+      <p class="panelLabel">
+        {{
+          intl.formatMessage({
+            id: "mirrorConfigPanelLabel",
+            defaultMessage: "镜像",
+          })
+        }}
+      </p>
     </div>
     <div class="configPanel">
       <StorageManager
         :config="props.config"
         @config-loaded="configLoadHandler"
       ></StorageManager>
-      <p class="panelLabel">保存与读取设置</p>
+      <p class="panelLabel">
+        {{
+          intl.formatMessage({
+            id: "preferenceConfigPanelLabel",
+            defaultMessage: "用户偏好",
+          })
+        }}
+      </p>
     </div>
   </div>
 </template>

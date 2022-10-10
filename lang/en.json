@@ -1,0 +1,54 @@
+{
+  "deletePreferenceLabel": {
+    "defaultMessage": "Delete preference"
+  },
+  "fontSizeLabel": {
+    "defaultMessage": "Font size(px)",
+    "description": "font size input label."
+  },
+  "fontWeightLabel": {
+    "defaultMessage": "Font weight",
+    "description": "font weight input label."
+  },
+  "formatConfigPanelLabel": {
+    "defaultMessage": "Format"
+  },
+  "inlinePaddingLabel": {
+    "defaultMessage": "Inline padding(%)",
+    "description": "inline direction padding input label."
+  },
+  "lineHeightLabel": {
+    "defaultMessage": "Line height(%)",
+    "description": "line height input label."
+  },
+  "mirrorAllToggleLabel": {
+    "defaultMessage": "Apply to all",
+    "description": "label for toggle that apply mirror to entire app."
+  },
+  "mirrorConfigPanelLabel": {
+    "defaultMessage": "Mirror"
+  },
+  "playbackSpeedPanelLabel": {
+    "defaultMessage": "Playback speed"
+  },
+  "preferenceConfigPanelLabel": {
+    "defaultMessage": "Preference"
+  },
+  "readPreferenceLabel": {
+    "defaultMessage": "Read preference"
+  },
+  "savePreferenceLabel": {
+    "defaultMessage": "Save preference"
+  },
+  "speedPxLabel": {
+    "defaultMessage": "Playback speed(px/sec)",
+    "description": "playback speed (in px per second) input label."
+  },
+  "textAlignLabel": {
+    "defaultMessage": "Text align",
+    "description": "text align input label."
+  },
+  "typographyConfigPanelLabel": {
+    "defaultMessage": "Typography"
+  }
+}

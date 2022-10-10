@@ -1,0 +1,54 @@
+{
+  "deletePreferenceLabel": {
+    "defaultMessage": "删除设置"
+  },
+  "fontSizeLabel": {
+    "defaultMessage": "字体大小（像素）",
+    "description": "font size input label."
+  },
+  "fontWeightLabel": {
+    "defaultMessage": "字体粗细",
+    "description": "font weight input label."
+  },
+  "formatConfigPanelLabel": {
+    "defaultMessage": "段落"
+  },
+  "inlinePaddingLabel": {
+    "defaultMessage": "水平内边距",
+    "description": "inline direction padding input label."
+  },
+  "lineHeightLabel": {
+    "defaultMessage": "行高（字体大小%）",
+    "description": "line height input label."
+  },
+  "mirrorAllToggleLabel": {
+    "defaultMessage": "应用至整个APP",
+    "description": "label for toggle that apply mirror to entire app."
+  },
+  "mirrorConfigPanelLabel": {
+    "defaultMessage": "镜像"
+  },
+  "playbackSpeedPanelLabel": {
+    "defaultMessage": "播放速度"
+  },
+  "preferenceConfigPanelLabel": {
+    "defaultMessage": "用户偏好"
+  },
+  "readPreferenceLabel": {
+    "defaultMessage": "读取设置"
+  },
+  "savePreferenceLabel": {
+    "defaultMessage": "保存设置"
+  },
+  "speedPxLabel": {
+    "defaultMessage": "滚动速度（像素/秒）",
+    "description": "playback speed (in px per second) input label."
+  },
+  "textAlignLabel": {
+    "defaultMessage": "对齐方式",
+    "description": "text align input label."
+  },
+  "typographyConfigPanelLabel": {
+    "defaultMessage": "字体"
+  }
+}
