@@ -1,6 +1,5 @@
 <script setup lang="ts">
-import { onMounted, onUpdated } from "vue";
-import { replace, default as feather } from "feather-icons";
+import { default as feather } from "feather-icons";
 export type buttonOption = { optionValue: string; featherIcon?: string };
 
 const props = defineProps<{

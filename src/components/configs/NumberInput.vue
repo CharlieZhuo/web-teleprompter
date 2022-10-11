@@ -1,6 +1,9 @@
 <script setup lang="ts">
+import { computed } from "@vue/reactivity";
+import { nanoid } from "nanoid";
+
 const props = defineProps<{
-  elementId: string;
+  elementId?: string;
   label: string;
   value: number;
   min: number;
@@ -14,15 +17,20 @@ const onChange = (e: Event) => {
   const value = +element.value;
   if (value < props.max && value > props.min) emits("change", value);
 };
+
+const id = computed(() => {
+  if (props.elementId) return props.elementId;
+  else return nanoid();
+});
 </script>
 <template>
-  <label class="numberInputLabel" :for="props.elementId">
+  <label class="numberInputLabel" :for="id">
     <span>
       {{ props.label }}
     </span>
     <input
       class="numberInput"
-      :id="props.elementId"
+      :id="id"
       :name="props.elementId"
       type="number"
       :value="props.value"

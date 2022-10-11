@@ -7,6 +7,19 @@ import StorageManager from "./StorageManager.vue";
 import { useIntl } from "vue-intl";
 import { inject } from "vue";
 import { localeKey, localeType, supportedLocales } from "../../IntlTypes";
+import SpeedInput from "./SpeedInput.vue";
+
+export type playbackSpeedType = {
+  pxPerSeceond: number;
+  totalTimeMiliSecond: number;
+  characterPerMinute: number;
+  wordPerMinute: number;
+};
+export type lockedSpeedType = keyof playbackSpeedType;
+export type playbackConfigType = {
+  speed: playbackSpeedType;
+  lockedSpeed: lockedSpeedType;
+};
 
 export type configType = {
   paddingInline: string;
@@ -22,8 +35,7 @@ export type configType = {
   horizontalMirror: boolean;
   verticalMirror: boolean;
   applyMirrorToAll: boolean;
-
-  playbackSpeedPxPerSeceond: number;
+  playbackConfig: playbackConfigType;
 };
 const emits = defineEmits<{
   (e: "config", newConfig: configType): void;
@@ -50,7 +62,6 @@ const fontSizeHandler = generateHandler("fontSize", (v) => v + "px");
 const fontWeightHandler = generateHandler("fontWeight");
 const lineHeightHandler = generateHandler("lineHeight", (v) => v + "%");
 const paddingHandler = generateHandler("paddingInline", (v) => v + "%");
-const playbackSpeedHandler = generateHandler("playbackSpeedPxPerSeceond");
 
 const configLoadHandler = (newConfig: configType) => {
   emits("config", newConfig);
@@ -112,6 +123,13 @@ const localeOptions: buttonOption[] = supportedLocales.map((v) => {
 const localeChangeHandler = (nv: string) => {
   locale?.setLocale(nv as localeType);
 };
+
+function speedValueHandler(newValue: number, type: lockedSpeedType) {
+  const newConfig = { ...props.config };
+  newConfig.playbackConfig.speed[type] = newValue;
+  emits("config", newConfig);
+}
+function speedLockHandler(type: lockedSpeedType) {}
 </script>
 <template>
   <div class="configContainer">
@@ -218,20 +236,30 @@ const localeChangeHandler = (nv: string) => {
     </div>
     <div class="configPanel">
       <form class="configForm" @submit.prevent>
-        <NumberInput
-          :element-id="'lineHeightInput'"
-          :label="
-            intl.formatMessage({
-              id: 'speedPxLabel',
-              defaultMessage: '滚动速度（像素/秒）',
-              description: 'playback speed (in px per second) input label.',
-            })
-          "
-          :value="props.config.playbackSpeedPxPerSeceond"
-          :min="10"
-          :max="300"
-          @Change="playbackSpeedHandler"
-        ></NumberInput>
+        <SpeedInput
+          :config="props.config.playbackConfig"
+          :type="'pxPerSeceond'"
+          @value-change="speedValueHandler"
+          @lock-change="speedLockHandler"
+        ></SpeedInput>
+        <SpeedInput
+          :config="props.config.playbackConfig"
+          :type="'totalTimeMiliSecond'"
+          @value-change="speedValueHandler"
+          @lock-change="speedLockHandler"
+        ></SpeedInput>
+        <SpeedInput
+          :config="props.config.playbackConfig"
+          :type="'characterPerMinute'"
+          @value-change="speedValueHandler"
+          @lock-change="speedLockHandler"
+        ></SpeedInput>
+        <SpeedInput
+          :config="props.config.playbackConfig"
+          :type="'wordPerMinute'"
+          @value-change="speedValueHandler"
+          @lock-change="speedLockHandler"
+        ></SpeedInput>
       </form>
       <p class="panelLabel">
         {{
@@ -275,25 +303,21 @@ const localeChangeHandler = (nv: string) => {
               />
               <path
                 d="m.86125 8.4667h15.211v-.08787"
-                style="
-                   {
-                    fill: none;
-                    stroke-dasharray: 2.4, 0.6, 0.3, 0.6;
-                    stroke-dashoffset: 1.35;
-                    stroke-width: 0.3;
-                    stroke: #000;
-                  }
-                "
+                :style="{
+                  fill: 'none',
+                  strokeDasharray: `2.4, 0.6, 0.3, 0.6`,
+                  strokeDashoffset: 1.35,
+                  strokeWidth: 0.3,
+                  stroke: `#000`,
+                }"
               />
               <path
                 d="m3.1818 3.0943h10.699l-2.5659 3.3366h-5.566z"
-                style="
-                   {
-                    fill: none;
-                    stroke-width: 0.26458px;
-                    stroke: #000;
-                  }
-                "
+                :style="{
+                  fill: `none`,
+                  strokeWidth: `0.26458px`,
+                  stroke: `#000`,
+                }"
               />
             </svg>
           </button>
@@ -325,15 +349,13 @@ const localeChangeHandler = (nv: string) => {
               />
               <path
                 d="m.86125 8.4667h15.211v-.08787"
-                style="
-                   {
-                    fill: none;
-                    stroke-dasharray: 2.4, 0.6, 0.3, 0.6;
-                    stroke-dashoffset: 1.35;
-                    stroke-width: 0.3;
-                    stroke: #000;
-                  }
-                "
+                :style="{
+                  fill: 'none',
+                  strokeDasharray: `2.4, 0.6, 0.3, 0.6`,
+                  strokeDashoffset: 1.35,
+                  strokeWidth: 0.3,
+                  stroke: `#000`,
+                }"
               />
               <path
                 d="m3.1818 3.0943h10.699l-2.5659 3.3366h-5.566z"

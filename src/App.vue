@@ -26,7 +26,15 @@ const defaultStyle: configType = {
   applyMirrorToAll: false,
   horizontalMirror: false,
   verticalMirror: false,
-  playbackSpeedPxPerSeceond: 35,
+  playbackConfig: {
+    speed: {
+      pxPerSeceond: 15,
+      characterPerMinute: 1,
+      totalTimeMiliSecond: 200000,
+      wordPerMinute: 1,
+    },
+    lockedSpeed: "pxPerSeceond",
+  },
 };
 
 const config = ref(defaultStyle);
@@ -82,6 +90,8 @@ watch(
   { deep: true }
 );
 const showPanel = ref(true);
+
+const playbackElementSize = ref<{ width: number; height: number } | null>(null);
 </script>
 
 <template>

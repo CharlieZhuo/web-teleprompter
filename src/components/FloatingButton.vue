@@ -22,7 +22,13 @@ const clickHandler = () => {
 <template>
   <button class="fab" @click="clickHandler">
     <i v-if="props.label.type === 'featherIcon'">
-      <div v-html="icons[props.label.featherIcon].toSvg()"></div
+      <div
+        :style="{
+          inlineSize: `24px`,
+          blockSize: `24px`,
+        }"
+        v-html="icons[props.label.featherIcon].toSvg()"
+      ></div
     ></i>
     <span v-if="props.label.type === 'text'"> {{ props.label.text }}</span>
   </button>

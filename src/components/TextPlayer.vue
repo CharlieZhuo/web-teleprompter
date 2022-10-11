@@ -54,7 +54,7 @@ const editor = ref<HTMLTextAreaElement | null>(null);
 
 const { animation } = useAnimation(
   paragraph,
-  computed(() => props.config.playbackSpeedPxPerSeceond),
+  computed(() => props.config.playbackConfig.speed.totalTimeMiliSecond),
   computed(() => props.text),
   computed(() => props.config)
 );
@@ -93,6 +93,7 @@ function stopPlayback() {
 function setProgress(newProgress: number) {
   progress.value = clamp(newProgress, 0, 1);
 }
+
 defineExpose({ stopPlayback, setProgress });
 </script>
 
@@ -124,6 +125,7 @@ defineExpose({ stopPlayback, setProgress });
         ...props.config,
         display: !props.playback ? 'block' : 'none',
         zIndex: 2,
+        // opacity: 0,
       }"
       :value="text"
       @input="props.onInput"
@@ -164,9 +166,6 @@ defineExpose({ stopPlayback, setProgress });
   margin-block: 0;
   margin-inline: 0;
   resize: none;
-
-  block-size: 100%;
-  inline-size: 100%;
 
   font-family: sans-serif;
   white-space: pre-wrap;

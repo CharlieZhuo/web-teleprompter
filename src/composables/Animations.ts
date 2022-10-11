@@ -4,7 +4,7 @@ import { onMounted, onUnmounted, onUpdated, ref, Ref, watch } from "vue";
 
 function createAnimation<eleType extends HTMLElement>(
   ele: eleType,
-  playbackSpeed: number
+  durationMiliSecond: number
 ) {
   const scrollHeight = ele.scrollHeight;
   const clientHeight = ele.clientHeight;
@@ -22,7 +22,7 @@ function createAnimation<eleType extends HTMLElement>(
     {
       easing: "linear",
       iterations: 1,
-      duration: (scrollHeight / playbackSpeed) * 1000,
+      duration: durationMiliSecond,
       fill: "forwards",
     }
   );
@@ -35,7 +35,7 @@ function createAnimation<eleType extends HTMLElement>(
 //content change
 export function useAnimation<eleType extends HTMLElement>(
   elementToAnimate: Ref<eleType | null>,
-  playbackSpeedPxPerSecond: Ref<number>,
+  durationMiliSeconds: Ref<number>,
   ...restWatchItems: Ref[]
 ) {
   const animation = ref<Animation | null>(null);
@@ -44,7 +44,7 @@ export function useAnimation<eleType extends HTMLElement>(
   onMounted(() => {
     const ele = elementToAnimate.value;
     if (ele) {
-      const ani = createAnimation(ele, playbackSpeedPxPerSecond.value);
+      const ani = createAnimation(ele, durationMiliSeconds.value);
       ani.pause();
       animation.value = ani;
 
@@ -57,7 +57,7 @@ export function useAnimation<eleType extends HTMLElement>(
           }
           const newAni = createAnimation(
             entry.target as HTMLParagraphElement,
-            playbackSpeedPxPerSecond.value
+            durationMiliSeconds.value
           );
           newAni.pause();
           animation.value = newAni;
@@ -75,16 +75,16 @@ export function useAnimation<eleType extends HTMLElement>(
   //on content change
   watch(
     [
-      playbackSpeedPxPerSecond,
+      durationMiliSeconds,
       ...restWatchItems.map((item) => {
         return () => item;
       }),
     ],
-    (nv, ov, cleanup) => {
+    ([durationMiliSeconds, ...restDep], ov, cleanup) => {
       const ele = elementToAnimate.value;
       if (ele) {
         console.log(`creating new animation`);
-        const ani = createAnimation(ele, nv[0]);
+        const ani = createAnimation(ele, durationMiliSeconds);
         ani.pause();
         animation.value = ani;
       }
@@ -260,4 +260,27 @@ export function useUpdateProgressFromEditorScroll(
     },
     { flush: "post" }
   );
+}
+
+export function useEditorScrollBarWidth(
+  editorRef: Ref<HTMLTextAreaElement | null>,
+  playback: boolean
+) {
+  const width = ref(0);
+  const observerRef = ref<ResizeObserver | null>(null);
+
+  watch(
+    [editorRef, () => playback],
+    ([editor, playback]) => {
+      if (editor && !playback) {
+        width.value = editor.getBoundingClientRect().width - editor.clientWidth;
+      }
+    },
+    {
+      deep: true,
+      immediate: true,
+    }
+  );
+
+  return width;
 }
