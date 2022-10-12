@@ -485,6 +485,8 @@ onMounted(() => {});
 }
 .panelLabel {
   margin-inline: 0;
-  margin-block: 0;
+  margin-block: 0.3em;
+
+  font-size: 1.2rem;
 }
 </style>

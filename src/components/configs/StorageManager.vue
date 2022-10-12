@@ -2,12 +2,13 @@
 import { nanoid } from "nanoid";
 import { onMounted, onUpdated, Ref, ref } from "vue";
 import { useIntl } from "vue-intl";
+import { deepCloneObjectProperty } from "../../util/deepCloneObjectProperty";
 import { configType } from "./TypographyConfig.vue";
 
 export type storedConfigType = {
   id: string;
   createdDate: string;
-  config: configType;
+  config: any;
 };
 
 const props = defineProps<{
@@ -30,7 +31,7 @@ const saveButtonHandler = () => {
   const configToSave: storedConfigType = {
     id: nanoid(),
     createdDate: `${Date.now()}`,
-    config: { ...props.config },
+    config: deepCloneObjectProperty(props.config),
   };
 
   saveConfig(configToSave);
@@ -50,17 +51,17 @@ const refreshButtonHandler = () => {
   getConfigs();
 };
 
-const liClickHandler = (e: Event) => {
-  const element = e.currentTarget as HTMLElement;
-  if (element.tagName === "LI" && element.id) {
-    if (!selectedConfig.value || selectedConfig.value.id !== element.id) {
-      const config = configs.value.find((c) => c.id === element.id);
+function generateHandler(id: string) {
+  return () => {
+    console.log(`clicked`);
+    if (!selectedConfig.value || selectedConfig.value.id !== id) {
+      const config = configs.value.find((c) => c.id === id);
       if (config) selectedConfig.value = config;
     } else {
       selectedConfig.value = null;
     }
-  }
-};
+  };
+}
 
 function openDb(successCallback?: () => void, upgradeCallback?: () => void) {
   console.log("openDb ...");
@@ -180,20 +181,76 @@ onMounted(() => {
 const intl = useIntl();
 </script>
 <template>
-  <div>
-    <ul class="configList" v-if="configs">
-      <li
-        v-for="config in configs"
-        :id="config.id"
-        @click="liClickHandler"
-        :class="{
-          configListItem: true,
-          selectedConfig: selectedConfig && selectedConfig.id === config.id,
-        }"
-      >
-        <span>{{ config.id }}</span> <span>{{ config.createdDate }}</span>
-      </li>
-    </ul>
+  <div
+    :style="{
+      overflowY: 'scroll',
+      maxBlockSize: `15em`,
+      flex: '1 1',
+      display: 'flex',
+      flexDirection: 'column',
+      justifyContent: 'space-between',
+
+      border: `1px solid black`,
+    }"
+  >
+    <table class="table">
+      <thead>
+        <tr>
+          <th>
+            {{
+              intl.formatMessage({
+                id: "preferenceNameHeader",
+                defaultMessage: "名称",
+              })
+            }}
+          </th>
+          <th>
+            {{
+              intl.formatMessage({
+                id: "preferenceCreatedDateHeader",
+                defaultMessage: "创建日期",
+              })
+            }}
+          </th>
+          <th>
+            {{
+              intl.formatMessage({
+                id: "preferenceIncludeTextHeader",
+                defaultMessage: "包含文字？",
+              })
+            }}
+          </th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr
+          v-for="config in configs"
+          @click="generateHandler(config.id)()"
+          :key="config.id"
+          :class="{
+            selectedConfig: selectedConfig && config.id === selectedConfig.id,
+          }"
+        >
+          <td>
+            {{ config.id }}
+          </td>
+          <td>
+            {{
+              intl.formatDate(+config.createdDate, {
+                year: "numeric",
+                month: "short",
+                day: "numeric",
+                hour: "numeric",
+                minute: "numeric",
+              })
+            }}
+          </td>
+          <td>
+            {{ "false" }}
+          </td>
+        </tr>
+      </tbody>
+    </table>
 
     <div>
       <button @click="saveButtonHandler">
@@ -224,18 +281,34 @@ const intl = useIntl();
   </div>
 </template>
 <style scoped>
-.configList {
-  list-style-type: none;
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
+.table {
+  table-layout: auto;
+  width: 100%;
 }
-.configListItem {
-  display: flex;
-  justify-content: space-between;
-  user-select: none;
-
+.table tr {
   cursor: pointer;
+  user-select: none;
+  padding-inline: 1em;
+
+  font-size: 1.1rem;
+}
+@layer {
+  .table tr:nth-child(even) {
+    background-color: hsl(270, 12%, 16%);
+  }
+  .table tr:nth-child(odd) {
+    background-color: hsl(75, 4%, 20%);
+  }
+}
+.table td {
+  word-break: keep-all;
+  padding: 0.2em;
+  text-align: center;
+}
+.table th {
+  word-break: keep-all;
+
+  background-color: hsl(0, 0%, 28%);
 }
 .selectedConfig {
   background-color: black;
