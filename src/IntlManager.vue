@@ -3,7 +3,6 @@ import { provide, ref } from "vue";
 import { IntlConfig } from "@formatjs/intl";
 import { localeKey, localeType } from "./IntlTypes";
 import enMessages from "../compiled-lang/en.json";
-import zhHansMessages from "../compiled-lang/zh-hans.json";
 import { computed } from "@vue/reactivity";
 import IntlProvider from "./IntlProvider.vue";
 
@@ -37,11 +36,9 @@ const config = computed(() => {
     case "EN":
       messages = enMessages;
       break;
-    case "简中":
-      messages = zhHansMessages;
-      break;
 
     default:
+      messages = undefined;
       break;
   }
   const config: IntlConfig<string> = {

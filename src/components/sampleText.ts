@@ -1,55 +1,50 @@
-export const sampleText = `You Probably Don't Need Derived State
-June 07, 2018 by Brian Vaughn
-React 16.4 included a bugfix for getDerivedStateFromProps which caused some existing bugs in React components to reproduce more consistently. If this release exposed a case where your application was using an anti-pattern and didn’t work properly after the fix, we’re sorry for the churn. In this post, we will explain some common anti-patterns with derived state and our preferred alternatives.
+export const sampleText = `We believe there is no "one size fits all" story for the web. This is why Vue is designed to be flexible and incrementally adoptable. Depending on your use case, Vue can be used in different ways to strike the optimal balance between stack complexity, developer experience and end performance.
 
-For a long time, the lifecycle componentWillReceiveProps was the only way to update state in response to a change in props without an additional render. In version 16.3, we introduced a replacement lifecycle, getDerivedStateFromProps to solve the same use cases in a safer way. At the same time, we’ve realized that people have many misconceptions about how to use both methods, and we’ve found anti-patterns that result in subtle and confusing bugs. The getDerivedStateFromProps bugfix in 16.4 makes derived state more predictable, so the results of misusing it are easier to notice.
+Standalone Script#
+Vue can be used as a standalone script file - no build step required! If you have a backend framework already rendering most of the HTML, or your frontend logic isn't complex enough to justify a build step, this is the easiest way to integrate Vue into your stack. You can think of Vue as a more declarative replacement of jQuery in such cases.
 
-Note
+Vue also provides an alternative distribution called petite-vue that is specifically optimized for progressively enhancing existing HTML. It has a smaller feature set, but is extremely lightweight and uses an implementation that is more efficient in no-build-step scenarios.
 
-All of the anti-patterns described in this post apply to both the older componentWillReceiveProps and the newer getDerivedStateFromProps.
+Embedded Web Components#
+You can use Vue to build standard Web Components that can be embedded in any HTML page, regardless of how they are rendered. This option allows you to leverage Vue in a completely consumer-agnostic fashion: the resulting web components can be embedded in legacy applications, static HTML, or even applications built with other frameworks.
 
-This blog post will cover the following topics:
+Single-Page Application (SPA)#
+Some applications require rich interactivity, deep session depth, and non-trivial stateful logic on the frontend. The best way to build such applications is to use an architecture where Vue not only controls the entire page, but also handles data updates and navigation without having to reload the page. This type of application is typically referred to as a Single-Page Application (SPA).
 
-When to use derived state
-Common bugs when using derived state
+Vue provides core libraries and comprehensive tooling support with amazing developer experience for building modern SPAs, including:
 
-Anti-pattern: Unconditionally copying props to state
-Anti-pattern: Erasing state when props change
-Preferred solutions
-What about memoization?
-When to Use Derived State
-getDerivedStateFromProps exists for only one purpose. It enables a component to update its internal state as the result of changes in props. Our previous blog post provided some examples, like recording the current scroll direction based on a changing offset prop or loading external data specified by a source prop.
+Client-side router
+Blazing fast build tool chain
+IDE support
+Browser devtools
+TypeScript integrations
+Testing utilities
+SPAs typically require the backend to expose API endpoints - but you can also pair Vue with solutions like Inertia.js to get the SPA benefits while retaining a server-centric development model.
 
-We did not provide many examples, because as a general rule, derived state should be used sparingly. All problems with derived state that we have seen can be ultimately reduced to either (1) unconditionally updating state from props or (2) updating state whenever props and state don’t match. (We’ll go over both in more detail below.)
+Fullstack / SSR#
+Pure client-side SPAs are problematic when the app is sensitive to SEO and time-to-content. This is because the browser will receive a largely empty HTML page, and has to wait until the JavaScript is loaded before rendering anything.
 
-If you’re using derived state to memoize some computation based only on the current props, you don’t need derived state. See What about memoization? below.
-If you’re updating derived state unconditionally or updating it whenever props and state don’t match, your component likely resets its state too frequently. Read on for more details.
-Common Bugs When Using Derived State
-The terms “controlled” and “uncontrolled” usually refer to form inputs, but they can also describe where any component’s data lives. Data passed in as props can be thought of as controlled (because the parent component controls that data). Data that exists only in internal state can be thought of as uncontrolled (because the parent can’t directly change it).
+Vue provides first-class APIs to "render" a Vue app into HTML strings on the server. This allows the server to send back already-rendered HTML, allowing end users to see the content immediately while the JavaScript is being downloaded. Vue will then "hydrate" the application on the client side to make it interactive. This is called Server-Side Rendering (SSR) and it greatly improves Core Web Vital metrics such as Largest Contentful Paint (LCP).
 
-The most common mistake with derived state is mixing these two; when a derived state value is also updated by setState calls, there isn’t a single source of truth for the data. The external data loading example mentioned above may sound similar, but it’s different in a few important ways. In the loading example, there is a clear source of truth for both the “source” prop and the “loading” state. When the source prop changes, the loading state should always be overridden. Conversely, the state is overridden only when the prop changes and is otherwise managed by the component.
+There are higher-level Vue-based frameworks built on top of this paradigm, such as Nuxt, which allow you to develop a fullstack application using Vue and JavaScript.
 
-Problems arise when any of these constraints are changed. This typically comes in two forms. Let’s take a look at both.
+JAMStack / SSG#
+Server-side rendering can be done ahead of time if the required data is static. This means we can pre-render an entire application into HTML and serve them as static files. This improves site performance and makes deployment a lot simpler since we no longer need to dynamically render pages on each request. Vue can still hydrate such applications to provide rich interactivity on the client. This technique is commonly referred to as Static-Site Generation (SSG), also known as JAMStack.
 
-Anti-pattern: Unconditionally copying props to state
-A common misconception is that getDerivedStateFromProps and componentWillReceiveProps are only called when props “change”. These lifecycles are called any time a parent component rerenders, regardless of whether the props are “different” from before. Because of this, it has always been unsafe to unconditionally override state using either of these lifecycles. Doing so will cause state updates to be lost.
+There are two flavors of SSG: single-page and multi-page. Both flavors pre-render the site into static HTML, the difference is that:
 
-Let’s consider an example to demonstrate the problem. Here is an EmailInput component that “mirrors” an email prop in state:
+After the initial page load, a single-page SSG "hydrates" the page into an SPA. This requires more upfront JS payload and hydration cost, but subsequent navigations will be faster, since it only needs to partially update the page content instead of reloading the entire page.
 
-class EmailInput extends Component {
-  state = { email: this.props.email };
+A multi-page SSG loads a new page on every navigation. The upside is that it can ship minimal JS - or no JS at all if the page requires no interaction! Some multi-page SSG frameworks such as Astro also support "partial hydration" - which allows you to use Vue components to create interactive "islands" inside static HTML.
 
-  render() {
-    return <input onChange={this.handleChange} value={this.state.email} />;
-  }
+Single-page SSGs are better suited if you expect non-trivial interactivity, deep session lengths, or persisted elements / state across navigations. Otherwise, multi-page SSG would be the better choice.
 
-  handleChange = event => {
-    this.setState({ email: event.target.value });
-  };
+The Vue team also maintains a static-site generator called VitePress, which powers this website you are reading right now! VitePress supports both flavors of SSG. Nuxt also supports SSG. You can even mix SSR and SSG for different routes in the same Nuxt app.
 
-  componentWillReceiveProps(nextProps) {
-    // This will erase any local state updates!
-    // Do not do this.
-    this.setState({ email: nextProps.email });
-  }
-}It is also worth re-iterating that getDerivedStateFromProps (and derived state in general) is an advanced feature and should be used sparingly because of this complexity. If your use case falls outside of these patterns, please share it with us on GitHub or Twitter!`;
+Beyond the Web#
+Although Vue is primarily designed for building web applications, it is by no means limited to just the browser. You can:
+
+Build desktop apps with Electron or Tauri
+Build mobile apps with Ionic Vue
+Build desktop and mobile apps from the same codebase with Quasar
+Use Vue's Custom Renderer API to build custom renderers targeting WebGL or even the terminal!`;

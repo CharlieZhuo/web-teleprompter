@@ -1,4 +1,10 @@
 {
+  "characterPerMinuteLabel": [
+    {
+      "type": 0,
+      "value": "Character/Minute"
+    }
+  ],
   "deletePreferenceLabel": [
     {
       "type": 0,
@@ -20,25 +26,25 @@
   "formatConfigPanelLabel": [
     {
       "type": 0,
-      "value": "Format"
+      "value": "Formatting"
     }
   ],
   "inlinePaddingLabel": [
     {
       "type": 0,
-      "value": "Inline padding(%)"
+      "value": "Inline padding"
     }
   ],
   "lineHeightLabel": [
     {
       "type": 0,
-      "value": "Line height(%)"
+      "value": "Line height(% of em)"
     }
   ],
   "mirrorAllToggleLabel": [
     {
       "type": 0,
-      "value": "Apply to all"
+      "value": "Apply to whole APP"
     }
   ],
   "mirrorConfigPanelLabel": [
@@ -56,7 +62,25 @@
   "preferenceConfigPanelLabel": [
     {
       "type": 0,
-      "value": "Preference"
+      "value": "User preference"
+    }
+  ],
+  "preferenceCreatedDateHeader": [
+    {
+      "type": 0,
+      "value": "Created time"
+    }
+  ],
+  "preferenceIncludeTextHeader": [
+    {
+      "type": 0,
+      "value": "Contain text?"
+    }
+  ],
+  "preferenceNameHeader": [
+    {
+      "type": 0,
+      "value": "Name"
     }
   ],
   "readPreferenceLabel": [
@@ -71,22 +95,28 @@
       "value": "Save preference"
     }
   ],
-  "speedPxLabel": [
-    {
-      "type": 0,
-      "value": "Playback speed(px/sec)"
-    }
-  ],
   "textAlignLabel": [
     {
       "type": 0,
       "value": "Text align"
     }
   ],
+  "totalTimeSecondLabel": [
+    {
+      "type": 0,
+      "value": "Total time(s)"
+    }
+  ],
   "typographyConfigPanelLabel": [
     {
       "type": 0,
       "value": "Typography"
+    }
+  ],
+  "wordPerMinuteLabel": [
+    {
+      "type": 0,
+      "value": "Word/Minute"
     }
   ]
 }

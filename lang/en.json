@@ -1,4 +1,8 @@
 {
+  "characterPerMinuteLabel": {
+    "defaultMessage": "Character/Minute",
+    "description": "playback speed (in characters per minute) input label."
+  },
   "deletePreferenceLabel": {
     "defaultMessage": "Delete preference"
   },
@@ -11,18 +15,18 @@
     "description": "font weight input label."
   },
   "formatConfigPanelLabel": {
-    "defaultMessage": "Format"
+    "defaultMessage": "Formatting"
   },
   "inlinePaddingLabel": {
-    "defaultMessage": "Inline padding(%)",
+    "defaultMessage": "Inline padding",
     "description": "inline direction padding input label."
   },
   "lineHeightLabel": {
-    "defaultMessage": "Line height(%)",
+    "defaultMessage": "Line height(% of em)",
     "description": "line height input label."
   },
   "mirrorAllToggleLabel": {
-    "defaultMessage": "Apply to all",
+    "defaultMessage": "Apply to whole APP",
     "description": "label for toggle that apply mirror to entire app."
   },
   "mirrorConfigPanelLabel": {
@@ -32,7 +36,16 @@
     "defaultMessage": "Playback speed"
   },
   "preferenceConfigPanelLabel": {
-    "defaultMessage": "Preference"
+    "defaultMessage": "User preference"
+  },
+  "preferenceCreatedDateHeader": {
+    "defaultMessage": "Created time"
+  },
+  "preferenceIncludeTextHeader": {
+    "defaultMessage": "Contain text?"
+  },
+  "preferenceNameHeader": {
+    "defaultMessage": "Name"
   },
   "readPreferenceLabel": {
     "defaultMessage": "Read preference"
@@ -40,15 +53,19 @@
   "savePreferenceLabel": {
     "defaultMessage": "Save preference"
   },
-  "speedPxLabel": {
-    "defaultMessage": "Playback speed(px/sec)",
-    "description": "playback speed (in px per second) input label."
-  },
   "textAlignLabel": {
     "defaultMessage": "Text align",
     "description": "text align input label."
   },
+  "totalTimeSecondLabel": {
+    "defaultMessage": "Total time(s)",
+    "description": "playback speed (in total seconds) input label."
+  },
   "typographyConfigPanelLabel": {
     "defaultMessage": "Typography"
+  },
+  "wordPerMinuteLabel": {
+    "defaultMessage": "Word/Minute",
+    "description": "playback speed (in words per minute) input label."
   }
 }
