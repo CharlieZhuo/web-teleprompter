@@ -4,7 +4,7 @@ import { onMounted, onUnmounted, onUpdated, ref, Ref, watch } from "vue";
 
 function createAnimation<eleType extends HTMLElement>(
   ele: eleType,
-  durationMiliSecond: number
+  durationSecond: number
 ) {
   const scrollHeight = ele.scrollHeight;
   const clientHeight = ele.clientHeight;
@@ -22,7 +22,7 @@ function createAnimation<eleType extends HTMLElement>(
     {
       easing: "linear",
       iterations: 1,
-      duration: durationMiliSecond,
+      duration: durationSecond * 1000,
       fill: "forwards",
     }
   );
@@ -35,7 +35,7 @@ function createAnimation<eleType extends HTMLElement>(
 //content change
 export function useAnimation<eleType extends HTMLElement>(
   elementToAnimate: Ref<eleType | null>,
-  durationMiliSeconds: Ref<number>,
+  durationSeconds: Ref<number>,
   ...restWatchItems: Ref[]
 ) {
   const animation = ref<Animation | null>(null);
@@ -44,7 +44,7 @@ export function useAnimation<eleType extends HTMLElement>(
   onMounted(() => {
     const ele = elementToAnimate.value;
     if (ele) {
-      const ani = createAnimation(ele, durationMiliSeconds.value);
+      const ani = createAnimation(ele, durationSeconds.value);
       ani.pause();
       animation.value = ani;
 
@@ -57,7 +57,7 @@ export function useAnimation<eleType extends HTMLElement>(
           }
           const newAni = createAnimation(
             entry.target as HTMLParagraphElement,
-            durationMiliSeconds.value
+            durationSeconds.value
           );
           newAni.pause();
           animation.value = newAni;
@@ -75,7 +75,7 @@ export function useAnimation<eleType extends HTMLElement>(
   //on content change
   watch(
     [
-      durationMiliSeconds,
+      durationSeconds,
       ...restWatchItems.map((item) => {
         return () => item;
       }),

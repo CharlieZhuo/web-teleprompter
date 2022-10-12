@@ -54,7 +54,7 @@ const editor = ref<HTMLTextAreaElement | null>(null);
 
 const { animation } = useAnimation(
   paragraph,
-  computed(() => props.config.playbackConfig.speed.totalTimeMiliSecond),
+  computed(() => props.config.playbackConfig.speed.totalTimeSecond),
   computed(() => props.text),
   computed(() => props.config)
 );

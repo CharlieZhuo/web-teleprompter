@@ -28,12 +28,11 @@ const defaultStyle: configType = {
   verticalMirror: false,
   playbackConfig: {
     speed: {
-      pxPerSeceond: 15,
-      characterPerMinute: 1,
-      totalTimeMiliSecond: 200000,
-      wordPerMinute: 1,
+      characterPerMinute: 180,
+      totalTimeSecond: 2000,
+      wordPerMinute: 90,
     },
-    lockedSpeed: "pxPerSeceond",
+    lockedSpeed: "wordPerMinute",
   },
 };
 

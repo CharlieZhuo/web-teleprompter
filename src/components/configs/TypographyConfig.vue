@@ -5,13 +5,12 @@ import extractNumber from "../../util/extractNumber";
 import ToggleSwitch from "./ToggleSwitch.vue";
 import StorageManager from "./StorageManager.vue";
 import { useIntl } from "vue-intl";
-import { inject } from "vue";
+import { inject, onMounted, watch } from "vue";
 import { localeKey, localeType, supportedLocales } from "../../IntlTypes";
 import SpeedInput from "./SpeedInput.vue";
 
 export type playbackSpeedType = {
-  pxPerSeceond: number;
-  totalTimeMiliSecond: number;
+  totalTimeSecond: number;
   characterPerMinute: number;
   wordPerMinute: number;
 };
@@ -125,11 +124,56 @@ const localeChangeHandler = (nv: string) => {
 };
 
 function speedValueHandler(newValue: number, type: lockedSpeedType) {
+  const speed = { ...props.config.playbackConfig.speed };
+  speed[type] = newValue;
+  const characterCount = props.text.slice().trim().length;
+  const wordCount = props.text.slice().trim().split(/\s+/).length;
+  switch (type) {
+    case "totalTimeSecond": {
+      speed.characterPerMinute = +(characterCount / (newValue / 60)).toFixed();
+      speed.wordPerMinute = +(wordCount / (newValue / 60)).toFixed();
+      break;
+    }
+    case "characterPerMinute": {
+      const totalTimeSecond = +((characterCount / newValue) * 60).toFixed();
+      speed.totalTimeSecond = totalTimeSecond;
+      speed.wordPerMinute = +(wordCount / (totalTimeSecond / 60)).toFixed();
+      break;
+    }
+    case "wordPerMinute": {
+      const totalTimeSecond = +((wordCount / newValue) * 60).toFixed();
+      speed.totalTimeSecond = totalTimeSecond;
+      speed.characterPerMinute = +(
+        characterCount /
+        (totalTimeSecond / 60)
+      ).toFixed();
+      break;
+    }
+  }
   const newConfig = { ...props.config };
-  newConfig.playbackConfig.speed[type] = newValue;
+  newConfig.playbackConfig.speed = speed;
   emits("config", newConfig);
 }
-function speedLockHandler(type: lockedSpeedType) {}
+function speedLockHandler(type: lockedSpeedType) {
+  const newConfig = { ...props.config };
+  newConfig.playbackConfig.lockedSpeed = type;
+  emits("config", newConfig);
+}
+
+watch(
+  () => props.text,
+  (text) => {
+    speedValueHandler(
+      props.config.playbackConfig.speed[
+        props.config.playbackConfig.lockedSpeed
+      ],
+      props.config.playbackConfig.lockedSpeed
+    );
+  },
+  { immediate: true }
+);
+
+onMounted(() => {});
 </script>
 <template>
   <div class="configContainer">
@@ -238,13 +282,7 @@ function speedLockHandler(type: lockedSpeedType) {}
       <form class="configForm" @submit.prevent>
         <SpeedInput
           :config="props.config.playbackConfig"
-          :type="'pxPerSeceond'"
-          @value-change="speedValueHandler"
-          @lock-change="speedLockHandler"
-        ></SpeedInput>
-        <SpeedInput
-          :config="props.config.playbackConfig"
-          :type="'totalTimeMiliSecond'"
+          :type="'totalTimeSecond'"
           @value-change="speedValueHandler"
           @lock-change="speedLockHandler"
         ></SpeedInput>

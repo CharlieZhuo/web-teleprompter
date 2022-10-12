@@ -26,18 +26,11 @@ function lockClickHandler(e: Event) {
 }
 const label = computed(() => {
   switch (props.type) {
-    case "pxPerSeceond":
+    case "totalTimeSecond":
       return intl.formatMessage({
-        id: "speedPxLabel",
-        defaultMessage: "滚动速度（像素/秒）",
-        description: "playback speed (in px per second) input label.",
-      });
-
-    case "totalTimeMiliSecond":
-      return intl.formatMessage({
-        id: "totalTimeMiliSecondLabel",
-        defaultMessage: "总时长（毫秒）",
-        description: "playback speed (in total miliseconds) input label.",
+        id: "totalTimeSecondLabel",
+        defaultMessage: "总时长(秒)",
+        description: "playback speed (in total seconds) input label.",
       });
     case "characterPerMinute":
       return intl.formatMessage({
@@ -55,6 +48,16 @@ const label = computed(() => {
       return "";
   }
 });
+const bound = computed(() => {
+  switch (props.type) {
+    case "characterPerMinute":
+      return { min: 60, max: 1800 };
+    case "totalTimeSecond":
+      return { min: 0, max: Number.MAX_SAFE_INTEGER };
+    case "wordPerMinute":
+      return { min: 10, max: 300 };
+  }
+});
 </script>
 <template>
   <div :class="$style.inputContainer">
@@ -62,16 +65,29 @@ const label = computed(() => {
       :label="label"
       :style="{ flex: `1 1 0` }"
       :value="props.config.speed[props.type]"
-      :min="10"
-      :max="300"
+      :min="bound.min"
+      :max="bound.max"
       @Change="inputChangeHandler"
     ></NumberInput>
-    <button :class="$style.lockButton" @click="lockClickHandler">
+    <button
+      :class="$style.lockButton"
+      @click="lockClickHandler"
+      :style="{
+        backgroundColor:
+          props.config.lockedSpeed === props.type
+            ? `rgb(132, 132, 132)`
+            : `rgb(208, 208, 208)`,
+      }"
+    >
       <i
+        :style="{
+          inlineSize: `24px`,
+          blockSize: `24px`,
+        }"
         v-html="
           feather.icons[
-            props.config.lockedSpeed === props.type ? 'unlock' : 'lock'
-          ].toSvg()
+            props.config.lockedSpeed === props.type ? 'lock' : 'unlock'
+          ].toSvg({ stroke: `black ` })
         "
       ></i>
     </button>
@@ -85,6 +101,14 @@ const label = computed(() => {
   gap: 1em;
 }
 .lockButton {
-  display: block;
+  appearance: none;
+  display: grid;
+  place-items: center;
+  padding-block: 5px;
+  padding-inline: 10px;
+  margin-block: 0;
+  margin-inline: 0;
+
+  border: 1px solid black;
 }
 </style>
