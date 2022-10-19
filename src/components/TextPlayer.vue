@@ -163,6 +163,9 @@ defineExpose({ stopPlayback, setProgress });
   position: absolute;
   inset: 0;
 
+  block-size: 100%;
+  inline-size: 100%;
+
   margin-block: 0;
   margin-inline: 0;
   resize: none;
