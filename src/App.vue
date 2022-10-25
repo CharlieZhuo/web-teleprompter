@@ -2,12 +2,18 @@
 import TextPlayer, { playerCallbacksType } from "./components/TextPlayer.vue";
 import PlaybackControl from "./components/PlaybackControl.vue";
 import { sampleText } from "./components/sampleText";
-import { ref, watch } from "vue";
+import { onMounted, ref, watch } from "vue";
 import TypographyConfig from "./components/configs/TypographyConfig.vue";
 import { configType } from "./components/configs/TypographyConfig.vue";
 import FloatingButton from "./components/FloatingButton.vue";
 import CollapsePanel from "./components/CollapsePanel.vue";
 import IntlManager from "./IntlManager.vue";
+import { useKeyEvents } from "./composables/useKeyEvents";
+import {
+  useMediaSessionHandler,
+  useMediaSessionPlaybackState,
+} from "./composables/useMediaSessionHandler";
+import { usePointerEvent } from "./composables/usePointerEvent";
 
 export type playbackStatusType = {
   currentTimeMs: number;
@@ -90,7 +96,9 @@ watch(
 );
 const showPanel = ref(true);
 
-const playbackElementSize = ref<{ width: number; height: number } | null>(null);
+useMediaSessionHandler();
+
+useMediaSessionPlaybackState(playing.value);
 </script>
 
 <template>
@@ -115,7 +123,7 @@ const playbackElementSize = ref<{ width: number; height: number } | null>(null);
         ></TypographyConfig>
       </CollapsePanel>
     </header>
-    <main class="main">
+    <main class="main" ref="mainRef">
       <TextPlayer
         ref="playerRef"
         :text="inputText"

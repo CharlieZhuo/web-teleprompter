@@ -11,6 +11,7 @@ const emits = defineEmits<{
   (e: "change", checked: boolean): void;
 }>();
 const onClick = (e: Event) => {
+  e.preventDefault();
   emits("change", !props.checked);
 };
 const id = computed(() => {

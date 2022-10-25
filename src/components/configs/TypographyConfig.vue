@@ -427,6 +427,7 @@ onMounted(() => {});
     <div class="configPanel">
       <StorageManager
         :config="props.config"
+        :text="props.text"
         @config-loaded="configLoadHandler"
       ></StorageManager>
       <p class="panelLabel">

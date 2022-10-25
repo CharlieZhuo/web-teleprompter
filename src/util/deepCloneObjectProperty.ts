@@ -1,14 +1,15 @@
-export function deepCloneObjectProperty(input: any) {
+export function deepCloneObjectProperty<inputType>(
+  input: inputType
+): inputType {
   const output = {};
   for (const key in input) {
     switch (typeof input[key]) {
       case "object":
         if (typeof input[key] === "object") {
-          Object.defineProperty(
-            output,
-            key,
-            deepCloneObjectProperty(input[key])
-          );
+          const propertyToClone = input[key];
+          Object.defineProperty(output, key, {
+            value: deepCloneObjectProperty(propertyToClone),
+          });
         }
         break;
 
@@ -25,5 +26,5 @@ export function deepCloneObjectProperty(input: any) {
         break;
     }
   }
-  return output;
+  return output as inputType;
 }

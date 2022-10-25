@@ -4,15 +4,18 @@ import { onMounted, onUpdated, Ref, ref } from "vue";
 import { useIntl } from "vue-intl";
 import { deepCloneObjectProperty } from "../../util/deepCloneObjectProperty";
 import { configType } from "./TypographyConfig.vue";
+import SavePreferenceModal, { savedInput } from "./SavePreferenceModal.vue";
 
 export type storedConfigType = {
   id: string;
   createdDate: string;
-  config: any;
+  config: configType;
+  text?: string;
 };
 
 const props = defineProps<{
   config: configType;
+  text: string;
 }>();
 
 const emits = defineEmits<{
@@ -26,29 +29,18 @@ const DBStoreName = "config";
 const db = ref<IDBDatabase | null>(null);
 const configs = ref<Array<storedConfigType>>([]);
 const selectedConfig = ref<storedConfigType | null>(null);
+const saving = ref(false);
 
 const saveButtonHandler = () => {
-  const configToSave: storedConfigType = {
-    id: nanoid(),
-    createdDate: `${Date.now()}`,
-    config: deepCloneObjectProperty(props.config),
-  };
-
-  saveConfig(configToSave);
+  saving.value = true;
 };
 
-const readButtonHandler = () => {
-  if (selectedConfig.value) emits("configLoaded", selectedConfig.value.config);
-};
+const readButtonHandler = () => {};
 
 const deleteButtonHandler = () => {
   if (selectedConfig.value) {
     deleteConfig(selectedConfig.value);
   }
-};
-
-const refreshButtonHandler = () => {
-  getConfigs();
 };
 
 function generateHandler(id: string) {
@@ -177,10 +169,24 @@ onMounted(() => {
     getConfigs();
   });
 });
+function saveModalClosedHandler(result: savedInput | null) {
+  saving.value = false;
+  if (result) {
+    const configToSave: storedConfigType = {
+      id: result.name,
+      createdDate: `${Date.now()}`,
+      config: deepCloneObjectProperty(props.config),
+      text: result.includeText ? props.text : undefined,
+    };
+    saveConfig(configToSave);
+  }
+}
 
 const intl = useIntl();
 </script>
 <template>
+  <SavePreferenceModal :showing="saving" @closed="saveModalClosedHandler">
+  </SavePreferenceModal>
   <div
     :style="{
       overflowY: 'scroll',
@@ -246,7 +252,17 @@ const intl = useIntl();
             }}
           </td>
           <td>
-            {{ "false" }}
+            {{
+              Boolean(config.text)
+                ? intl.formatMessage({
+                    id: "yes",
+                    defaultMessage: "是",
+                  })
+                : intl.formatMessage({
+                    id: "no",
+                    defaultMessage: "否",
+                  })
+            }}
           </td>
         </tr>
       </tbody>
@@ -281,6 +297,11 @@ const intl = useIntl();
   </div>
 </template>
 <style scoped>
+.modalContent {
+  position: fixed;
+  block-size: 30vh;
+  inline-size: 30vw;
+}
 .table {
   table-layout: auto;
   width: 100%;

@@ -1,4 +1,4 @@
-import { onMounted, onUnmounted, ref, Ref } from "vue";
+import { onMounted, onUnmounted, ref, Ref, unref } from "vue";
 export type handlerType = {
   onDown?: (e: PointerEvent) => void;
   onMove?: (e: PointerEvent) => void;
@@ -7,7 +7,7 @@ export type handlerType = {
 };
 
 export function usePointerEvent<eleType extends HTMLElement>(
-  elementRef: Ref<eleType | null>,
+  elementRef: eleType | null | Ref<eleType | null>,
   ...handlers: handlerType[]
 ) {
   const moving = ref(false);
@@ -64,7 +64,7 @@ export function usePointerEvent<eleType extends HTMLElement>(
   }
 
   onMounted(() => {
-    const element = elementRef.value;
+    const element = unref(elementRef);
     if (element) {
       console.log(`adding pointer event listeners`);
       element.addEventListener("pointerdown", onDownHandler);
@@ -77,7 +77,7 @@ export function usePointerEvent<eleType extends HTMLElement>(
     }
   });
   onUnmounted(() => {
-    const element = elementRef.value;
+    const element = unref(elementRef);
     if (element) {
       element.removeEventListener("pointerdown", onDownHandler);
       element.removeEventListener("pointermove", onMoveHandler);
