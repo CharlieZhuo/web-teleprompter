@@ -1,10 +1,11 @@
 <script lang="ts" setup>
-import { provide, ref } from "vue";
+import { provide, ref, watch } from "vue";
 import { IntlConfig } from "@formatjs/intl";
 import { localeKey, localeType } from "./IntlTypes";
 import enMessages from "../compiled-lang/en.json";
 import { computed } from "@vue/reactivity";
 import IntlProvider from "./IntlProvider.vue";
+import WebTitleIntl from "./WebTitleIntl.vue";
 
 const currentLocaleLabel = ref<localeType>("简中");
 
@@ -56,6 +57,7 @@ provide(localeKey, {
 </script>
 <template>
   <IntlProvider :config="config" :key="config.locale">
-    <slot></slot
-  ></IntlProvider>
+    <WebTitleIntl></WebTitleIntl>
+    <slot></slot>
+  </IntlProvider>
 </template>
