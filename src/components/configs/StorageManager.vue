@@ -268,7 +268,7 @@ const intl = useIntl();
       </tbody>
     </table>
 
-    <div>
+    <div class="buttonContainer">
       <button @click="saveButtonHandler">
         {{
           intl.formatMessage({
@@ -333,5 +333,13 @@ const intl = useIntl();
 }
 .selectedConfig {
   background-color: black;
+}
+.buttonContainer {
+  display: flex;
+  justify-content: center;
+  gap: 0.6rem;
+
+  margin-inline: 0.5rem;
+  margin-block: 0.2rem;
 }
 </style>

@@ -46,6 +46,8 @@ const id = computed(() => {
   align-items: center;
   justify-content: space-between;
   gap: 1em;
+
+  margin-block: 0.3rem;
 }
 .numberInputLabel span {
   min-inline-size: max-content;

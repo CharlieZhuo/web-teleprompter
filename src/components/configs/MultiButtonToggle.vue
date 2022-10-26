@@ -40,8 +40,8 @@ const onClick = (e: Event) => {
 <style scoped>
 .multiButtonContainer {
   display: flex;
-  align-items: center;
-  gap: 5px;
+  align-items: stretch;
+  gap: 0.6rem;
 }
 .multiButtonContainer > .button:not(:last-child, :only-child) {
   border-inline-end: 1px solid gray;
@@ -58,8 +58,21 @@ const onClick = (e: Event) => {
   background-color: hsl(0, 0%, 70%);
   color: black;
   border: 1px solid white;
+
+  padding-block: 0.2rem;
+  padding-inline: 0.6rem;
+  font-size: 1.1rem;
+
+  inline-size: max-content;
+}
+.button i {
+  display: grid;
+  place-items: center;
+}
+.button span {
+  inline-size: max-content;
 }
 .selected {
-  box-shadow: inset 0px 0px 2px 2px black;
+  outline: solid 5px white;
 }
 </style>

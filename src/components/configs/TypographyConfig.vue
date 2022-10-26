@@ -8,6 +8,7 @@ import { useIntl } from "vue-intl";
 import { inject, onMounted, watch } from "vue";
 import { localeKey, localeType, supportedLocales } from "../../IntlTypes";
 import SpeedInput from "./SpeedInput.vue";
+import { icons } from "feather-icons";
 
 export type playbackSpeedType = {
   totalTimeSecond: number;
@@ -177,14 +178,17 @@ onMounted(() => {});
 </script>
 <template>
   <div class="configContainer">
-    <div v-if="locale">
-      <MultiButtonToggle
-        :options="localeOptions"
-        :selected="locale.currentLocale.value"
-        @change="localeChangeHandler"
-      >
-        ></MultiButtonToggle
-      >
+    <div class="configPanel">
+      <div v-if="locale">
+        <MultiButtonToggle
+          :options="localeOptions"
+          :selected="locale.currentLocale.value"
+          @change="localeChangeHandler"
+        >
+          ></MultiButtonToggle
+        >
+      </div>
+      <p class="panelLabel" v-html="icons['globe'].toSvg({})"></p>
     </div>
     <div class="configPanel">
       <form class="configForm" @submit.prevent>
@@ -310,11 +314,7 @@ onMounted(() => {});
     </div>
     <div class="configPanel">
       <form class="configForm" @submit.prevent>
-        <div
-          :style="{
-            display: 'flex',
-          }"
-        >
+        <div class="mirrorButtonsContainer">
           <button
             id="vmButton"
             @click="vmHanlder"
@@ -489,5 +489,12 @@ onMounted(() => {});
   margin-block: 0.3em;
 
   font-size: 1.2rem;
+}
+.mirrorButtonsContainer {
+  display: flex;
+  justify-content: space-between;
+
+  margin-block: 0.4rem;
+  gap: 0.6rem;
 }
 </style>
